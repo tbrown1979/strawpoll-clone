@@ -1,4 +1,4 @@
-package actors
+package strawpoll
 
 import util._
 import akka.actor._
