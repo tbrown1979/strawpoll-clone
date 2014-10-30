@@ -19,4 +19,8 @@ object Application extends Controller {
     request => out => PollSocketActor.props(out)
   }
 
+  def newPoll = Action(parse.json) {
+    req => Ok("hi")
+  }
+
 }
