@@ -8,6 +8,7 @@ import play.api.libs.json._
 import play.api.mvc._
 
 object Application extends Controller {
+  val redisRepo = new RedisPollRepository{}
 
   val masterSocketActor = Props(new MasterSocketActor)
 
@@ -20,7 +21,7 @@ object Application extends Controller {
   }
 
   def newPoll = Action(parse.json) {
-    req => Ok("hi")
+    req => redisRepo.createPoll()
   }
 
 }

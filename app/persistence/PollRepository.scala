@@ -24,6 +24,7 @@ trait RedisPollRepository extends PollRepository with PollFutureProvider {
   val redis = Redis()
   import redis.dispatcher
 
+  //maybe just return the id here?
   def create(poll: Poll): Future[Poll] = {
     val pollId = redis.incr("pollId")
 
