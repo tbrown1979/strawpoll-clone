@@ -6,7 +6,7 @@ import play.api.libs.functional.syntax._
 case class Vote(pollId: String)
 case object VoteCast
 
-case class Poll(title: String, id: Option[Long], answers: Map[String,Int])
+case class Poll(title: String, id: Option[String], answers: Map[String,Int])
 
 object Poll {
   implicit val pollWrites = new Writes[Poll] {
@@ -19,7 +19,7 @@ object Poll {
 
   implicit val pollReads: Reads[Poll] = (
     (JsPath \ "title").read[String] and
-    (JsPath \ "id").readNullable[Long] and
+    (JsPath \ "id").readNullable[String] and
     (JsPath \ "answers").read[Map[String,Int]]
   )(Poll.apply _)
 }
