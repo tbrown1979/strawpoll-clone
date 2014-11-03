@@ -4,6 +4,7 @@ import util._
 import actors._
 import akka.actor.ActorSystem
 import akka.actor._
+import models._
 import play.api.Play.current
 import play.api._
 import play.api.libs.concurrent.Akka
@@ -13,8 +14,6 @@ import scala.util.{Success, Failure}
 import scredis._
 import scredis.serialization._
 import scredis.serialization.Implicits._
-
-case class Poll(title: String, id: Option[Long], answers: Map[String,Int])
 
 trait PollRepository extends FutureProvider {
   def create(poll: Poll): Future[Poll]

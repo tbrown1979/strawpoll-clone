@@ -8,7 +8,6 @@ trait FutureProvider {
   type ExecutionContext = scala.concurrent.ExecutionContext
   type Future[T] = scala.concurrent.Future[T]
 
-
   val Future = scala.concurrent.Future
   def system: ActorSystem
   def future[T](f: => T)(implicit ec: ExecutionContext): Future[T]
