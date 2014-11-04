@@ -11,11 +11,19 @@ import play.api.Logger
 //import org.joda.time.DateTime
 
 object PollSocketActor {
-  def props(out: ActorRef) = Props(new PollSocketActor(out))
+  def props(out: ActorRef, socketManager: ActorRef, pollId: String) =
+    Props(new PollSocketActor(out, socketManager, pollId))
 }
 
-class PollSocketActor(out: ActorRef) extends Actor {
+class PollSocketActor(out: ActorRef, socketManager: ActorRef, pollId: String) extends Actor {
+  import PollEventSource._
+  socketManager ! RegisterListener(pollId, self)
+
   def receive = {
     case msg: JsValue => out ! s"I received your message: $msg"
+  }
+
+  override def postStop() = {
+    socketManager ! UnregisterListener(pollId, self)
   }
 }

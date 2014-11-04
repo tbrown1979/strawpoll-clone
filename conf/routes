@@ -4,7 +4,7 @@
 
 # Home page
 GET     /                           controllers.Application.index
-GET     /socket                     controllers.Application.socket
+GET     /poll/:id                   controllers.Application.poll(id: String)
 POST    /api/new/poll               controllers.Application.newPoll
 
 # Map static resources from the /public folder to the /assets URL path

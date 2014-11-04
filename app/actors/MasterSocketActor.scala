@@ -9,7 +9,6 @@ import play.api.libs.ws.WS
 import play.api.libs.json._
 import play.api.libs.json.{JsValue, Json}
 import play.api.Logger
-//import org.joda.time.DateTime
 
 object PollEventSource {
   case class RegisterListener(pollId: String, listener: ActorRef)
@@ -26,9 +25,16 @@ trait PollEventSource { this: Actor =>
 
   def eventSourceReceive: Receive = {
     case RegisterListener(pollId, listener) =>
-      listeners(pollId) = listeners(pollId) :+ listener
+      //need to double check this/test this
+      listeners.update(pollId, listeners.getOrElseUpdate(pollId, Vector(listener)) :+ listener)
+      println(listeners.get(pollId))
     case UnregisterListener(pollId, listener) =>
-      listeners(pollId) = listeners(pollId) filter { _ != listener }
+      //need to make sure to clear out the pollIDs that don't have any actorRefs in their vector
+      listeners.update(pollId, listeners.getOrElseUpdate(pollId, Vector()) filter { _ != listener })
+      println(listeners.get(pollId).map(_.length))
+      listeners.get(pollId) match {
+        case Some(Vector()) => {println("done listening $pollId"); listeners.remove(pollId)}
+      }
   }
 }
 
