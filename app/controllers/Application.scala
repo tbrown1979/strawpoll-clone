@@ -25,7 +25,8 @@ object Application extends Controller {
     Ok(views.html.index("Your new application is ready."))
   }
 
-  def poll(id: String) = WebSocket.acceptWithActor[JsValue, JsValue] {
+  def apiSocketPoll(id: String) = WebSocket.acceptWithActor[JsValue, JsValue] {
+    //get rid of this
     val pollId = "21"
     request =>
       out => PollSocketActor.props(out, masterSocketActor, pollId)
@@ -36,7 +37,10 @@ object Application extends Controller {
   // }
 
   def newPoll = Action.async(parse.json) {
-    req => redisRepo.create(req.body.as[Poll]).map( p => Ok(p.id.toString))
+    req => redisRepo.create(req.body.as[Poll]).map( p => {
+      val error = Ok(Json.obj("error" -> "Encountered error"))
+      val resp  = (id: String) => Ok(Json.obj("id" -> id))
+      p.id.fold(error)(resp)
+    })
   }
-
 }

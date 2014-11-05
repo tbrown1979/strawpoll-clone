@@ -25,14 +25,12 @@ trait PollEventSource { this: Actor =>
 
   def eventSourceReceive: Receive = {
     case RegisterListener(pollId, listener) =>
-      //need to double check this/test this
       listeners.update(pollId, listeners.getOrElse(pollId, Vector()) :+ listener)
-      println(listeners.get(pollId))
     case UnregisterListener(pollId, listener) =>
-      //need to make sure to clear out the pollIDs that don't have any actorRefs in their vector
       listeners.update(pollId, listeners.getOrElseUpdate(pollId, Vector()) filter { _ != listener })
-      println(listeners.get(pollId).map(_.length))
-      if (listeners.get(pollId).isEmpty) listeners.remove(pollId)
+      if (listeners.isDefinedAt(pollId)) {
+        if (listeners(pollId).isEmpty) listeners.remove(pollId)
+      }
   }
 }
 
