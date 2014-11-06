@@ -26,15 +26,14 @@ object Application extends Controller {
   }
 
   def apiSocketPoll(id: String) = WebSocket.acceptWithActor[JsValue, JsValue] {
-    //get rid of this
-    val pollId = "21"
     request =>
-      out => PollSocketActor.props(out, masterSocketActor, pollId)
+      out => PollSocketActor.props(out, masterSocketActor, id)
   }
 
-  // def poll(id: String) = Action.async {
-  //   redisRepo.get(id).map(x => Ok(x.toString))
-  // }
+  def poll(id: String) = Action {
+    //redisRepo.get(id).map(x => Ok(x.toString))
+    Ok(views.html.poll(Poll("test", None, Map())))
+  }
 
   def newPoll = Action.async(parse.json) {
     req => redisRepo.create(req.body.as[Poll]).map( p => {
