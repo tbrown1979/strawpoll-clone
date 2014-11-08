@@ -32,7 +32,7 @@ object Application extends Controller {
 
   def poll(id: String) = Action {
     //redisRepo.get(id).map(x => Ok(x.toString))
-    Ok(views.html.poll(Poll("test", None, Map())))
+    Ok(views.html.poll(Poll("test", None, Map(), Seq())))
   }
 
   def newPoll = Action.async(parse.json) {
