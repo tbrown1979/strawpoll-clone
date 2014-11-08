@@ -30,9 +30,9 @@ object Application extends Controller {
       out => PollSocketActor.props(out, masterSocketActor, id)
   }
 
-  def poll(id: String) = Action {
-    //redisRepo.get(id).map(x => Ok(x.toString))
-    Ok(views.html.poll(Poll("test", None, Map(), Seq())))
+  def poll(id: String) = Action.async {
+    redisRepo.get(id).map(p => Ok(views.html.poll(p)))
+    //Ok(views.html.poll(Poll("test", None, Map(), Seq())))
   }
 
   def newPoll = Action.async(parse.json) {
