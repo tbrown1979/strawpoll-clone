@@ -29,4 +29,15 @@ object Poll {
     (JsPath \ "options").read[Map[String,Int]] and
     (JsPath \ "fields").read[Seq[String]]
   )(Poll.apply _)
+
+  def toPoll(pm: Map[String, Any], pollId: String): Option[Poll] = {
+    try {
+      val title = pm("title").asInstanceOf[String]
+      val fields = pm.keys.filter(_.toLowerCase.contains("option")).map(o => pm(o)).toSeq.asInstanceOf[Seq[String]]
+      val options = pm.keys.filter(o => o.forall(_.isDigit)).map(d => (d -> pm(d))).toMap.asInstanceOf[Map[String,Int]]
+      Some(Poll(title, Some(pollId), options, fields))
+    } catch {
+      case _: Throwable => None
+    }
+  }
 }
