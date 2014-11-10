@@ -2,6 +2,8 @@ package models
 
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
+import scredis.serialization._
+import scredis.serialization.Implicits._
 
 case class Vote(pollId: String)
 case object VoteCast
@@ -40,4 +42,22 @@ object Poll {
       case _: Throwable => None
     }
   }
+
+
+  // implicit object PollWriter extends Writer[Poll] {
+  //   private val utf16StringWriter = new StringWriter("UTF-16")
+
+  //   override def writeImpl(poll: Poll): Array[Byte] = {
+  //     utf16StringWriter.write(s"title ${poll.title} options ${poll.answers.toString}")
+  //   }
+  // }
+  // implicit object PollReader extends Reader[Poll] {
+  //   val utf16StringReader = new StringReader("UTF-16")
+
+  //   override def readImpl(bytes: Array[Byte]): Poll = {
+  //     val split = utf16StringReader.read(bytes).split(":")
+  //     Poll("asdfasdf", None, Map[String, Int]("d" -> 4))
+  //   }
+  // }
+
 }

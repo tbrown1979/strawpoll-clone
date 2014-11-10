@@ -23,24 +23,6 @@ trait RedisPollRepository extends PollRepository with PollFutureProvider {
   val redis = Redis()
   import redis.dispatcher
 
-  implicit object PollWriter extends Writer[Poll] {
-    private val utf16StringWriter = new StringWriter("UTF-16")
-
-    override def writeImpl(poll: Poll): Array[Byte] = {
-      utf16StringWriter.write(s"title ${poll.title} options ${poll.answers.toString}")
-    }
-  }
-  implicit object PollReader extends Reader[Poll] {
-    val utf16StringReader = new StringReader("UTF-16")
-
-    override def readImpl(bytes: Array[Byte]): Poll = {
-      val split = utf16StringReader.read(bytes).split(":")
-      println(IOUtils.toString(bytes))
-      Poll("asdfasdf", None, Map[String, Int]("d" -> 4))
-    }
-  }
-
-
   def create(poll: Poll): Future[Poll] = {
     val pollId = redis.incr("pollId")
 
