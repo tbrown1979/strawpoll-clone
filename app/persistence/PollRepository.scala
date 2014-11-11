@@ -23,17 +23,27 @@ trait RedisPollRepository extends PollRepository with PollFutureProvider {
   val redis = Redis()
   import redis.dispatcher
 
+  private def pollToMap(poll: Poll): Map[String, String] = {
+    val titleMap  = Map("title" -> poll.title)
+    val tallyMap  = poll.tallies.map(tally => (tally._1, tally._2.toString))
+    val optionMap = poll.options.foldLeft(Map[String,String]() -> 0)(
+      (b, a) => (b._1.+(s"Option${b._2}" -> a) -> (b._2 + 1)))._1
+    titleMap ++ tallyMap ++ optionMap
+  }
+
+
   def create(poll: Poll): Future[Poll] = {
     val pollId = redis.incr("pollId")
 
     for {
       id <- pollId
       name = s"poll:$id"
-      unit <- redis.hmSet[Int](name, poll.options)
-      unit <- redis.hmSet[String](name, poll.fields.foldLeft(Map[String,String]() -> 0)
-        ((b, a) => (b._1.+(s"Option${b._2}" -> a) -> (b._2 + 1)))._1)
-      unit <- redis.hmSet[String](name, Map("title" -> poll.title))
-    } yield Poll(poll.title, Some(id.toString), poll.options, poll.fields)
+      // unit <- redis.hmSet[Int](name, poll.tallies)
+      // unit <- redis.hmSet[String](name, poll.options.foldLeft(Map[String,String]() -> 0)
+      //   ((b, a) => (b._1.+(s"Option${b._2}" -> a) -> (b._2 + 1)))._1)
+      // unit <- redis.hmSet[String](name, Map("title" -> poll.title))
+      unit <- redis.hmSet[String](name, pollToMap(poll))
+    } yield Poll(poll.title, Some(id.toString), poll.tallies, poll.options)
   }
 
   def get(pollId: String): Future[Poll] = {

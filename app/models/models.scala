@@ -11,8 +11,8 @@ case object VoteCast
 case class Poll(
   title:   String,
   id:      Option[String],
-  options: Map[String,Int],
-  fields:  Seq[String]
+  tallies: Map[String,Int],
+  options:  Seq[String]
 )
 
 object Poll {
@@ -20,24 +20,24 @@ object Poll {
     def writes(poll: Poll) = Json.obj(
       "title"   -> poll.title,
       "id"      -> poll.id,
-      "options" -> poll.options,
-      "fields"  -> poll.fields
+      "tallies" -> poll.tallies,
+      "options"  -> poll.options
     )
   }
 
   implicit val pollReads: Reads[Poll] = (
     (JsPath \ "title").read[String] and
     (JsPath \ "id").readNullable[String] and
-    (JsPath \ "options").read[Map[String,Int]] and
-    (JsPath \ "fields").read[Seq[String]]
+    (JsPath \ "tallies").read[Map[String,Int]] and
+    (JsPath \ "options").read[Seq[String]]
   )(Poll.apply _)
 
   def toPoll(pm: Map[String, Any], pollId: String): Option[Poll] = {
     try {
       val title = pm("title").asInstanceOf[String]
-      val fields = pm.keys.filter(_.toLowerCase.contains("option")).map(o => pm(o)).toSeq.asInstanceOf[Seq[String]]
-      val options = pm.keys.filter(o => o.forall(_.isDigit)).map(d => (d -> pm(d))).toMap.asInstanceOf[Map[String,Int]]
-      Some(Poll(title, Some(pollId), options, fields))
+      val options = pm.keys.filter(_.toLowerCase.contains("option")).map(o => pm(o)).toSeq.asInstanceOf[Seq[String]]
+      val tallies = pm.keys.filter(o => o.forall(_.isDigit)).map(d => (d -> pm(d))).toMap.asInstanceOf[Map[String,Int]]
+      Some(Poll(title, Some(pollId), tallies, options))
     } catch {
       case _: Throwable => None
     }
