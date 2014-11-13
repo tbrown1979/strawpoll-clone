@@ -12,6 +12,7 @@ import play.api.mvc._
 import akka.actor.ActorSystem
 import play.api.libs.concurrent.Akka
 import scala.util.{Success, Failure}
+import play.api.Logger
 import util._
 
 
@@ -35,10 +36,20 @@ object Application extends Controller {
   }
 
   def newPoll = Action.async(parse.json) {
-    req => redisRepo.create(req.body.as[Poll]).map( p => {
-      val error = Ok(Json.obj("error" -> "Encountered error"))
-      val resp  = (id: String) => Ok(Json.obj("id" -> id))
-      p.id.fold(error)(resp)
-    })
+    req => {
+      try {
+        val maybePoll = req.body.as[Poll]
+        val error = Ok(Json.obj("error" -> "Encountered error"))
+        val resp  = (id: String) => Ok(Json.obj("id" -> id))
+        maybePoll.map(p => p.idresp())
+      } catch {
+        case e: JsResultException =>
+          Logger.info(e.toString)
+          scala.concurrent.Future(BadRequest("Invalid json!"))
+        case e: Exception =>
+          Logger.info("Something happened!" + e.toString)
+          scala.concurrent.Future(BadRequest(""))
+      }
+    }
   }
 }

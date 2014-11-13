@@ -23,13 +23,13 @@ trait RedisPollRepository extends PollRepository with PollFutureProvider {
   val redis = Redis()
   import redis.dispatcher
 
-  def create(poll: Poll): Future[Poll] = {
+  def create(newPoll: PollCreation): Future[Poll] = {
     val pollId = redis.incr("pollId")
 
     for {
       id <- pollId
       name = s"poll:$id"
-      p = poll.copy(id = Some(id.toString))
+      p = Poll(newPoll.title, id.toString, Poll.zeroedTallies(newPoll.options), newPoll.options)
       unit <- redis.hmSet[String](name, Poll.pollToMap(p))
     } yield p
   }
