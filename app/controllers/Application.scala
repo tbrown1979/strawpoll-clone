@@ -38,7 +38,7 @@ object Application extends Controller {
   def newPoll = Action.async(parse.json) {
     req => {
       try {
-        val maybePoll = req.body.as[Poll]
+        val maybePoll = req.body.as[PollCreation]
         val error = Ok(Json.obj("error" -> "Encountered error"))
         val resp  = (id: String) => Ok(Json.obj("id" -> id))
         maybePoll.map(p => p.idresp())
