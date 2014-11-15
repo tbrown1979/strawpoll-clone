@@ -37,19 +37,17 @@ object Application extends Controller {
 
   def newPoll = Action.async(parse.json) {
     req => {
-      try {
-        val maybePoll = req.body.as[PollCreation]
-        val error = Ok(Json.obj("error" -> "Encountered error"))
-        val resp  = (id: String) => Ok(Json.obj("id" -> id))
-        maybePoll.map(p => p.idresp())
-      } catch {
-        case e: JsResultException =>
-          Logger.info(e.toString)
-          scala.concurrent.Future(BadRequest("Invalid json!"))
-        case e: Exception =>
-          Logger.info("Something happened!" + e.toString)
-          scala.concurrent.Future(BadRequest(""))
-      }
+      val maybePoll = req.body.validate[PollCreation]
+      maybePoll.fold(
+        errors => {
+          scala.concurrent.Future(BadRequest(
+            Json.obj("status" -> "KO", "message" -> JsError.toFlatJson(errors))))
+        },
+        toCreate => {
+          val poll = redisRepo.create(toCreate)
+          poll.map(p => Ok(Json.obj("id" -> p.id)))
+        }
+      )
     }
   }
 }
