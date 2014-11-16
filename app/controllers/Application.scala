@@ -17,10 +17,8 @@ import util._
 
 
 object Application extends Controller {
-
-  val redisRepo = new RedisPollRepository{}
-
   val masterSocketActor = Akka.system.actorOf(Props(new MasterSocketActor))
+  val redisRepo = new RedisPollRepository{ val voteReporter = masterSocketActor }
 
   def index = Action {
     Ok(views.html.index("Your new application is ready."))

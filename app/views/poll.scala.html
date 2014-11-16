@@ -9,4 +9,9 @@
         @poll.title
       </li>
     </ul>
+    <ul>
+      @for(o <- poll.options) {
+        <li>@o</li>
+      }
+    </ul>
 }

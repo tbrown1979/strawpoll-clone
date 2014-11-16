@@ -31,13 +31,13 @@ object PollCreation {
 case class Poll(
   title:   String,
   id:      String,
-  tallies: Map[String,Int],
-  options:  Seq[String]
+  tallies: Vector[Int],
+  options: Seq[String]
 )
 
 object Poll {
-  def zeroedTallies(options: Seq[String]): Map[String,Int] = {
-    (0 to options.length - 1).toList.map(n => (n.toString -> 0)).toMap
+  def zeroedTallies(options: Seq[String]): Vector[Int] = {
+    (0 to options.length - 1).toVector.map(_ => 0)
   }
 
   implicit val pollWrites = new Writes[Poll] {
@@ -52,7 +52,7 @@ object Poll {
   implicit val pollReads: Reads[Poll] = (
     (JsPath \ "title").read[String] and
     (JsPath \ "id").read[String] and
-    (JsPath \ "tallies").read[Map[String,Int]] and
+    (JsPath \ "tallies").read[Vector[Int]] and
     (JsPath \ "options").read[Seq[String]]
   )(Poll.apply _)
 
@@ -60,7 +60,7 @@ object Poll {
     try {
       val title = pm("title").asInstanceOf[String]
       val options = pm.keys.filter(_.toLowerCase.contains("option")).map(o => pm(o)).toSeq.asInstanceOf[Seq[String]]
-      val tallies = pm.keys.filter(o => o.forall(_.isDigit)).map(d => (d -> pm(d))).toMap.asInstanceOf[Map[String,Int]]
+      val tallies = pm.keys.filter(o => o.forall(_.isDigit)).map(d => (pm(d).asInstanceOf[Int])).toVector
       Some(Poll(title, pollId, tallies, options))
     } catch {
       case e: Throwable =>
@@ -72,7 +72,8 @@ object Poll {
   implicit def pollToMap(poll: Poll): Map[String, String] = {
     val titleMap  = Map("title" -> poll.title)
     val id        = Map("id" -> poll.id)
-    val tallyMap  = poll.tallies.map(tally => (tally._1, tally._2.toString))
+    val tallyMap  = (0 to poll.tallies.length - 1)
+      .map(_.toString).zip(poll.tallies.map(_.toString))
     val optionMap = poll.options.foldLeft(Map[String,String]() -> 0)(
       (b, a) => (b._1.+(s"Option${b._2}" -> a) -> (b._2 + 1)))._1
     titleMap ++ tallyMap ++ optionMap ++ id
