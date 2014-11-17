@@ -9,9 +9,11 @@
         @poll.title
       </li>
     </ul>
+    @poll.options.toString
+    @poll.tallies.toString
     <ul>
-      @for(o <- poll.options) {
-        <li>@o</li>
+      @for(o <- poll.options.zip(poll.tallies)) {
+        <li>@o._1 -> @o._2</li>
       }
     </ul>
 }

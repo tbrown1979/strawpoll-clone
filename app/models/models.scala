@@ -37,6 +37,7 @@ case class Poll(
 
 object Poll {
   def zeroedTallies(options: Seq[String]): Vector[Int] = {
+    println((0 to options.length - 1).toVector.map(_ => 0))
     (0 to options.length - 1).toVector.map(_ => 0)
   }
 
@@ -59,8 +60,11 @@ object Poll {
   implicit def toPoll(pm: Map[String, Any], pollId: String): Option[Poll] = {
     try {
       val title = pm("title").asInstanceOf[String]
-      val options = pm.keys.filter(_.toLowerCase.contains("option")).map(o => pm(o)).toSeq.asInstanceOf[Seq[String]]
-      val tallies = pm.keys.filter(o => o.forall(_.isDigit)).map(d => (pm(d).asInstanceOf[Int])).toVector
+      val options = pm.keys.filter(_.toLowerCase.contains("option"))
+        .map(o => pm(o)).toSeq.asInstanceOf[Seq[String]]
+      val tallies = pm.keys.filter(o => o.forall(_.isDigit))
+        .toVector.map(d => pm(d).toString.toInt).asInstanceOf[Vector[Int]]
+
       Some(Poll(title, pollId, tallies, options))
     } catch {
       case e: Throwable =>
