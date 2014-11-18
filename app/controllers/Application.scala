@@ -18,7 +18,7 @@ import util._
 
 object Application extends Controller {
   val masterSocketActor = Akka.system.actorOf(Props(new MasterSocketActor))
-  val redisRepo = new RedisPollRepository{ val voteReporter = masterSocketActor }
+  val redisRepo = new RedisPollRepository{}//{ val voteReporter = masterSocketActor } needed?
 
   def index = Action {
     Ok(views.html.index("Your new application is ready."))
@@ -30,7 +30,28 @@ object Application extends Controller {
   }
 
   def poll(id: String) = Action.async {
-    redisRepo.get(id).map(p => Ok(views.html.poll(p)))
+    redisRepo.get(id).map(
+      _.fold(Ok(views.html.error("Poll not found")))((p: Poll) => Ok(views.html.poll(p)))
+    )
+  }
+
+  def castVote = Action.async(parse.json) {
+    req => {
+      val maybeVote = req.body.validate[Vote]
+      maybeVote fold (
+        errors => {
+          scala.concurrent.Future(BadRequest(
+            Json.obj("status" -> "KO", "message" -> JsError.toFlatJson(errors))))
+        },
+        vote => {
+          val voteCount = redisRepo.incrOption(vote.pollId, vote.index)
+          voteCount.map(_ => {
+            masterSocketActor ! VoteCast(vote.pollId)
+            Ok(Json.obj("status" -> "ok"))
+          })
+        }
+      )
+    }
   }
 
   def newPoll = Action.async(parse.json) {

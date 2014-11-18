@@ -6,27 +6,15 @@ import play.api.libs.functional.syntax._
 import scredis.serialization._
 import scredis.serialization.Implicits._
 
-case class Vote(pollId: String)
-case object VoteCast
-
-case class PollCreation(
-  title: String,
-  options: Seq[String]
-)
-
-object PollCreation {
-  implicit val pollWrites = new Writes[PollCreation] {
-    def writes(poll: PollCreation) = Json.obj(
-      "title"   -> poll.title,
-      "options"  -> poll.options
-    )
-  }
-
-  implicit val pollReads: Reads[PollCreation] = (
-    (JsPath \ "title").read[String] and
-    (JsPath \ "options").read[Seq[String]]
-  )(PollCreation.apply _)
+case class Vote(pollId: String, index: Int)
+object Vote {
+  implicit val voteReads: Reads[Vote] = (
+    (JsPath \ "pollId").read[String] and
+    (JsPath \ "index").read[Int]
+  )(Vote.apply _)
 }
+
+case class VoteCast(pollId: String)
 
 case class Poll(
   title:   String,

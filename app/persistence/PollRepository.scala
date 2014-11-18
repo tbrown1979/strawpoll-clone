@@ -34,15 +34,17 @@ trait RedisPollRepository extends PollRepository with PollFutureProvider {
     } yield p
   }
 
-  def get(pollId: String): Future[Poll] = {
+  def get(pollId: String): Future[Option[Poll]] = {
     val pollName = s"poll:$pollId"
-    val poll = redis.hGetAll[String](pollName)
-    lazy val exception = throw new Exception("Didn't exist!")
+    val pollMap = redis.hGetAll[String](pollName)
     for {
-      o <- poll
-    } yield o.fold(exception)(Poll.toPoll(_, pollId).fold(exception)(p => p))
+      o <- pollMap
+    } yield for {
+      m <- o
+      poll <- Poll.toPoll(m, pollId)
+    } yield poll
   }
 
-  def incrOption(pollId: String, optionIndex: String): Future[Long] =
-    redis.hIncrBy(s"poll:$pollId", optionIndex, 1)
+  def incrOption(pollId: String, optionIndex: Int): Future[Long] =
+    redis.hIncrBy(s"poll:$pollId", optionIndex.toString, 1)
 }

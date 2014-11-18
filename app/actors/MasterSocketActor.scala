@@ -36,8 +36,8 @@ trait PollEventSource { this: Actor =>
 
 class MasterSocketActor extends Actor with PollEventSource {
   def masterReceive: Receive = {
-    case Vote(pollId) =>
-      sendEventTo(pollId, VoteCast)
+    case vote@Vote(pollId, _) =>
+      sendEventTo(pollId, vote)
   }
 
   def receive = eventSourceReceive orElse masterReceive
