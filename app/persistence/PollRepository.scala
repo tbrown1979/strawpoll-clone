@@ -46,5 +46,5 @@ trait RedisPollRepository extends PollRepository with PollFutureProvider {
   }
 
   def incrOption(pollId: String, optionIndex: Int): Future[Long] =
-    redis.hIncrBy(s"poll:$pollId", optionIndex.toString, 1)
+    redis.hIncrBy(s"poll:$pollId", s"${optionIndex.toString}", 1)
 }
