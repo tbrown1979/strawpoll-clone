@@ -45,10 +45,14 @@ object Application extends Controller {
         },
         vote => {
           val voteCount = redisRepo.incrOption(vote.pollId, vote.index)
-          voteCount.map(c => {
-            masterSocketActor ! VoteCast(vote.pollId)
-            Ok(Json.obj("status" -> "ok", "count" -> c))
-          })
+          voteCount.map(o =>
+            o.fold(Ok(Json.obj("status" -> "failed", "message" -> "Invalid selection")))(
+              c => {
+                masterSocketActor ! VoteCast(vote.pollId)
+                Ok(Json.obj("status" -> "ok", "count" -> c))
+              }
+            )
+          )
         }
       )
     }
