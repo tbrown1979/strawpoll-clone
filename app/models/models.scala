@@ -14,7 +14,7 @@ object Vote {
   )(Vote.apply _)
 }
 
-case class VoteCast(pollId: String)
+//case class VoteCast(pollId: String)
 
 case class Poll(
   title:   String,

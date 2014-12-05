@@ -1,19 +1,14 @@
 @(poll: Poll)
 
 @main("The Poll") {
-    <ul>
-      <li>
-        @poll.id
-      </li>
-      <li>
-        @poll.title
-      </li>
-    </ul>
-    @poll.options.toString
-    @poll.tallies.toString
-    <ul>
-      @for(o <- poll.options.zip(poll.tallies)) {
-        <li>@o._1 -> @o._2</li>
-      }
-    </ul>
+
+    <form id="castVote" action="">
+      <div class="">
+        @poll.title<br>
+        @for(o <- poll.options.zip(poll.tallies)) {
+          <input type="radio" name="option" value="@o._1">@o._1<br>
+        }
+        <input type="submit" value="Go">
+      </div>
+    </form>
 }

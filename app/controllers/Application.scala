@@ -48,7 +48,7 @@ object Application extends Controller {
           voteCount.map(o =>
             o.fold(Ok(Json.obj("status" -> "failed", "message" -> "Invalid selection")))(
               c => {
-                masterSocketActor ! VoteCast(vote.pollId)
+                masterSocketActor ! Vote(vote.pollId, vote.index)
                 Ok(Json.obj("status" -> "ok", "count" -> c))
               }
             )
