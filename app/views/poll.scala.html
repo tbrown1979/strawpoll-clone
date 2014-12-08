@@ -5,8 +5,8 @@
     <form id="castVote" action="">
       <div class="">
         @poll.title<br>
-        @for(o <- poll.options.zip(poll.tallies)) {
-          <input type="radio" name="option" value="@o._1">@o._1<br>
+        @for(o <- poll.options.zipWithIndex) {
+          <input type="radio" name="option" value="@o._2">@o._1<br>
         }
         <input type="submit" value="Go">
       </div>
