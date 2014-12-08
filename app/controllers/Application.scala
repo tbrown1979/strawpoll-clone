@@ -35,6 +35,12 @@ object Application extends Controller {
     )
   }
 
+  def viewResults(id: String) = Action.async {
+    redisRepo.get(id).map(
+      _.fold(Ok(views.html.error("Poll not found")))((p: Poll) => Ok(views.html.results(p)))
+    )
+  }
+
   def castVote = Action.async(parse.json) {
     req => {
       val maybeVote = req.body.validate[Vote]
