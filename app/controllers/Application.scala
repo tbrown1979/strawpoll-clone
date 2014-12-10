@@ -29,17 +29,18 @@ object Application extends Controller {
       out => PollSocketActor.props(out, masterSocketActor, id)
   }
 
+  //refactor
   def poll(id: String) = Action.async {
     redisRepo.get(id).map(
       _.fold(Ok(views.html.error("Poll not found")))((p: Poll) => Ok(views.html.poll(p)))
     )
   }
-
   def viewResults(id: String) = Action.async {
     redisRepo.get(id).map(
       _.fold(Ok(views.html.error("Poll not found")))((p: Poll) => Ok(views.html.results(p)))
     )
   }
+  //--
 
   def castVote = Action.async(parse.json) {
     req => {
