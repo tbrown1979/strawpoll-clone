@@ -1,0 +1,11 @@
+@(poll: Poll)
+
+@main("Results"){
+<script src="@routes.Assets.at("javascripts/results.js")" type="text/javascript"></script>
+}{
+
+  @poll.title<br>
+  @for(o <- poll.options.zip(poll.tallies)) {
+    @o._1 --- @o._2<br>
+  }
+}
