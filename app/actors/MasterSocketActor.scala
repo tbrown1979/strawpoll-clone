@@ -20,9 +20,11 @@ trait PollEventSource { this: Actor =>
 
   var listeners = scala.collection.mutable.Map[String, Vector[ActorRef]]()
 
-  def sendEventTo[T](poll: String, event: T): Unit = {
+  def sendEventTo[T](pollId: String, event: T): Unit = {
     Logger.info(listeners.toString)
-    listeners.get(poll).foreach(_ foreach { _ ! event })
+    val poll = listeners.get(pollId)
+    Logger.info(poll.toString)
+    poll.foreach(_ foreach { _ ! event })
   }
 
   def eventSourceReceive: Receive = {

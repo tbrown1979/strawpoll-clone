@@ -53,8 +53,6 @@ object Poll {
         .map(o => pm(o)).toSeq.asInstanceOf[Seq[String]]
       val tallies = pm.keys.filter(o => o.forall(_.isDigit)).toVector
         .sorted.map(d => pm(d).toString.toInt).asInstanceOf[Vector[Int]]
-      Logger.info(tallies.toString)
-      Logger.info(pm.keys.filter(o => o.forall(_.isDigit)).toString)
 
       Some(Poll(title, pollId, tallies, options))
     } catch {

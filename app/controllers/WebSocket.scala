@@ -21,6 +21,7 @@ class PollSocketActor(out: ActorRef, socketManager: ActorRef, pollId: String) ex
 
   def receive = {
     case msg: JsValue => out ! s"I received your message: $msg"
+    case _ => Logger.info("Didn't match anything")
   }
 
   override def postStop() = {
