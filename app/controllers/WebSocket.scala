@@ -1,6 +1,7 @@
 package actors
 
 import util._
+import models._
 import akka.actor._
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.iteratee.{Concurrent, Iteratee}
@@ -21,6 +22,7 @@ class PollSocketActor(out: ActorRef, socketManager: ActorRef, pollId: String) ex
 
   def receive = {
     case msg: JsValue => out ! s"I received your message: $msg"
+    case SocketVote(pollId, poll) => out ! Json.toJson(poll.tallies)
     case _ => Logger.info("Didn't match anything")
   }
 

@@ -21,9 +21,7 @@ trait PollEventSource { this: Actor =>
   var listeners = scala.collection.mutable.Map[String, Vector[ActorRef]]()
 
   def sendEventTo[T](pollId: String, event: T): Unit = {
-    Logger.info(listeners.toString)
     val poll = listeners.get(pollId)
-    Logger.info(poll.toString)
     poll.foreach(_ foreach { _ ! event })
   }
 
@@ -40,7 +38,7 @@ trait PollEventSource { this: Actor =>
 
 class MasterSocketActor extends Actor with PollEventSource {
   def masterReceive: Receive = {
-    case vote@Vote(pollId, _) =>
+    case vote@SocketVote(pollId, _) =>
       sendEventTo(pollId, vote)
   }
 

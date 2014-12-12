@@ -55,7 +55,8 @@ object Application extends Controller {
           voteCount.map(o =>
             o.fold(Ok(Json.obj("status" -> "failed", "message" -> "Invalid selection")))(
               c => {
-                masterSocketActor ! Vote(vote.pollId, vote.index)
+                //.get, but should always be there so not a huge deal
+                redisRepo.get(vote.pollId).map(o => masterSocketActor ! SocketVote(vote.pollId, o.get))
                 Ok(Json.obj("status" -> "ok", "count" -> c))
               }
             )
