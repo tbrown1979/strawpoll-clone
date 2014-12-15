@@ -19,7 +19,7 @@ trait PollRepository extends FutureProvider {
   def create(poll: PollCreation): Future[Poll]
 }
 
-trait RedisPollRepository extends PollRepository with PollFutureProvider {
+object RedisPollRepository extends PollRepository with PollFutureProvider {
   val redis = Redis()
   import redis.dispatcher
 

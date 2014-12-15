@@ -6,7 +6,7 @@ import play.api.libs.functional.syntax._
 import scredis.serialization._
 import scredis.serialization.Implicits._
 
-case class SocketVote(pollId: String, poll: Poll)
+case class SocketVote(pollId: String)
 
 case class Vote(pollId: String, index: Int)
 object Vote {

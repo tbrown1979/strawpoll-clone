@@ -18,7 +18,6 @@ import util._
 
 object Application extends Controller {
   val masterSocketActor = Akka.system.actorOf(Props(new MasterSocketActor))
-  val redisRepo = new RedisPollRepository{}//{ val voteReporter = masterSocketActor } needed?
 
   def index = Action {
     Ok(views.html.index("Your new application is ready."))
@@ -29,14 +28,19 @@ object Application extends Controller {
       out => PollSocketActor.props(out, masterSocketActor, id)
   }
 
+  def demo = WebSocket.acceptWithActor[JsValue, JsValue] {
+    request =>
+      out => PollSocketActor.props(out, masterSocketActor, "demo")
+  }
+
   //refactor
   def poll(id: String) = Action.async {
-    redisRepo.get(id).map(
+    RedisPollRepository.get(id).map(
       _.fold(Ok(views.html.error("Poll not found")))((p: Poll) => Ok(views.html.poll(p)))
     )
   }
   def viewResults(id: String) = Action.async {
-    redisRepo.get(id).map(
+    RedisPollRepository.get(id).map(
       _.fold(Ok(views.html.error("Poll not found")))((p: Poll) => Ok(views.html.results(p)))
     )
   }
@@ -51,12 +55,12 @@ object Application extends Controller {
             Json.obj("status" -> "KO", "message" -> JsError.toFlatJson(errors))))
         },
         vote => {
-          val voteCount = redisRepo.incrOption(vote.pollId, vote.index)
+          val voteCount = RedisPollRepository.incrOption(vote.pollId, vote.index)
           voteCount.map(o =>
             o.fold(Ok(Json.obj("status" -> "failed", "message" -> "Invalid selection")))(
               c => {
                 //.get, but should always be there so not a huge deal
-                redisRepo.get(vote.pollId).map(o => masterSocketActor ! SocketVote(vote.pollId, o.get))
+                masterSocketActor ! SocketVote(vote.pollId)
                 Ok(Json.obj("status" -> "ok", "count" -> c))
               }
             )
@@ -75,7 +79,7 @@ object Application extends Controller {
             Json.obj("status" -> "KO", "message" -> JsError.toFlatJson(errors))))
         },
         toCreate => {
-          val poll = redisRepo.create(toCreate)
+          val poll = RedisPollRepository.create(toCreate)
           poll.map(p => Ok(Json.obj("id" -> p.id)))
         }
       )
