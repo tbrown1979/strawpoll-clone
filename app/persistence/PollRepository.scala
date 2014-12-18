@@ -24,7 +24,11 @@ object RedisPollRepository extends PollRepository with PollFutureProvider {
   import redis.dispatcher
 
   def create(newPoll: PollCreation): Future[Poll] = {
-    val pollId = redis.incr("pollId")
+    createCustomPoll(newPoll)
+  }
+
+  def createCustomPoll(newPoll: PollCreation, customId: Option[String] = None): Future[Poll] = {
+    val pollId = customId.fold(redis.incr("pollId").map(_.toString))(s => Future.successful(s))
 
     for {
       id <- pollId

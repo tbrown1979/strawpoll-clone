@@ -1,23 +1,33 @@
 package controllers
 
 import actors._
+import akka.actor.ActorSystem
 import akka.actor._
+import java.util.concurrent.TimeUnit;
 import models._
 import persistence._
+import play.api.Logger
 import play.api.Play.current
 import play.api._
+import play.api.libs.concurrent.Akka
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json._
 import play.api.mvc._
-import akka.actor.ActorSystem
-import play.api.libs.concurrent.Akka
+import scala.concurrent.duration._
 import scala.util.{Success, Failure}
-import play.api.Logger
 import util._
 
 
 object Application extends Controller {
   val masterSocketActor = Akka.system.actorOf(Props(new MasterSocketActor))
+  //move somewhere else?
+  val demoPoll = PollCreation("Demo", Seq("Option1", "Option2", "Option3"))
+  RedisPollRepository.createCustomPoll(demoPoll, Some("demo"))
+  .onComplete{
+    case Success(p) => Akka.system.scheduler
+      .schedule(0 milliseconds, 50 milliseconds, masterSocketActor, SocketVote("demo"))
+    case Failure(e) => Logger.info("Error encountered with Demo creation: " + e.toString)
+  }
 
   def index = Action {
     Ok(views.html.index("Your new application is ready."))
