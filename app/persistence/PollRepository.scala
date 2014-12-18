@@ -17,6 +17,7 @@ import scredis.serialization.Implicits._
 
 trait PollRepository extends FutureProvider {
   def create(poll: PollCreation): Future[Poll]
+  def get(pollId: String): Future[Option[Poll]]
 }
 
 object RedisPollRepository extends PollRepository with PollFutureProvider {

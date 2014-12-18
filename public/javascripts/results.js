@@ -1,9 +1,12 @@
 $(function() {
   function getIdFromUrl() {
     var url = window.location.pathname;
-    var id = url.substring(url.lastIndexOf('/')-1, url.lastIndexOf('/'));
-    console.log(id);
-    return id;
+    function getId(url) {
+      var split = url.split("/");
+      return split[split.length-2];
+    }
+    console.log(getId(url));
+    return getId(url);
   }
 
   var id = getIdFromUrl();
