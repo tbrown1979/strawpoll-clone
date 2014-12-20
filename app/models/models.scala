@@ -17,7 +17,7 @@ object Vote {
 }
 
 //case class VoteCast(pollId: String)
-
+case class Votes(tallies: Vector[Int])
 case class Poll(
   title:   String,
   id:      String,

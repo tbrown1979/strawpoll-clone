@@ -14,6 +14,7 @@ import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json._
 import play.api.mvc._
 import scala.concurrent.duration._
+import scala.concurrent.Future
 import scala.util.{Success, Failure}
 import util._
 
@@ -24,8 +25,12 @@ object Application extends Controller {
   val demoPoll = PollCreation("Demo", Seq("Option1", "Option2", "Option3"))
   RedisPollRepository.createCustomPoll(demoPoll, Some("demo"))
   .onComplete{
-    case Success(p) => Akka.system.scheduler
-      .schedule(0 milliseconds, 50 milliseconds, masterSocketActor, SocketVote("demo"))
+    case Success(p) => {
+      Akka.system.scheduler.schedule(0 milliseconds, 200 milliseconds){
+        val randInt = scala.util.Random.nextInt(3)
+        votePoll("demo", randInt)
+      }
+    }
     case Failure(e) => Logger.info("Error encountered with Demo creation: " + e.toString)
   }
 
@@ -56,6 +61,12 @@ object Application extends Controller {
   }
   //--
 
+  def votePoll(pollId: String, index: Int): Future[Option[Long]] = {
+    val voteCount = RedisPollRepository.incrOption(pollId, index)
+    voteCount.foreach(_ => masterSocketActor ! SocketVote(pollId))
+    voteCount
+  }
+
   def castVote = Action.async(parse.json) {
     req => {
       val maybeVote = req.body.validate[Vote]
@@ -65,12 +76,11 @@ object Application extends Controller {
             Json.obj("status" -> "KO", "message" -> JsError.toFlatJson(errors))))
         },
         vote => {
-          val voteCount = RedisPollRepository.incrOption(vote.pollId, vote.index)
+          val voteCount = votePoll(vote.pollId, vote.index)
           voteCount.map(o =>
             o.fold(Ok(Json.obj("status" -> "failed", "message" -> "Invalid selection")))(
               c => {
                 //.get, but should always be there so not a huge deal
-                masterSocketActor ! SocketVote(vote.pollId)
                 Ok(Json.obj("status" -> "ok", "count" -> c))
               }
             )

@@ -2,6 +2,7 @@ package actors
 
 import util._
 import models._
+import persistence._
 import akka.actor._
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.iteratee.{Concurrent, Iteratee}
@@ -38,8 +39,9 @@ trait PollEventSource { this: Actor =>
 
 class MasterSocketActor extends Actor with PollEventSource {
   def masterReceive: Receive = {
-    case vote@SocketVote(pollId) =>
-      sendEventTo(pollId, vote)
+    case SocketVote(pollId) =>
+      RedisPollRepository.get(pollId).map(_.foreach(poll =>
+        sendEventTo(pollId, Votes(poll.tallies))))
   }
 
   def receive = eventSourceReceive orElse masterReceive
