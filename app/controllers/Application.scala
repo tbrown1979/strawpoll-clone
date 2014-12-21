@@ -21,10 +21,9 @@ import util._
 
 object Application extends Controller {
   val masterSocketActor = Akka.system.actorOf(Props(new MasterSocketActor))
-  //move somewhere else?
+
   val demoPoll = PollCreation("Demo", Seq("Option1", "Option2", "Option3"))
-  RedisPollRepository.createCustomPoll(demoPoll, Some("demo"))
-  .onComplete{
+  RedisPollRepository.createCustomPoll(demoPoll, Some("demo")).onComplete {
     case Success(p) => {
       Akka.system.scheduler.schedule(0 milliseconds, 200 milliseconds){
         val randInt = scala.util.Random.nextInt(3)
