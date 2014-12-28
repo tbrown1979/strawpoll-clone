@@ -5,17 +5,14 @@ $(function() {
       var split = url.split("/");
       return split[split.length-2];
     }
-    //console.log(getId(url));
     return getId(url);
   }
 
   var id = getIdFromUrl();
-  var pollSocket = new WebSocket("ws://localhost:9000/ws/votes/" + id);//
+  var pollSocket = new WebSocket("ws://localhost:9000/ws/votes/" + id);
   pollSocket.onmessage = function (event) {
-    //console.log(event.data);
     var data = JSON.parse(event.data);
     var tallies = $("div div div.pollStats");
-    //console.log(tallies);
     $("div div div.pollStats span.votes").map(function(i, v) {
       $(this).html(data[i]);
       return data[i];
@@ -23,7 +20,9 @@ $(function() {
   }
 });
 
+var test = $(".votes").map(function(i, e) {$(e).text();});
 
+console.log(test);
 var cv_w = 300,
 cv_h = 300,
 cv_r = 150
@@ -31,8 +30,6 @@ cv_color = d3.scale.category10();
 
 var cv_arc = d3.svg.arc().outerRadius(cv_r);
 var cv_pie = d3.layout.pie().value(function (d) { return d.value });
-var test = d3.select("body").select("div.mydiv");
-console.log(test);
 var cv_svg = d3.select("div.mydiv")
   .append("svg")
   .attr("width", cv_w)
