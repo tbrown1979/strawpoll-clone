@@ -13,16 +13,23 @@ $(function() {
   pollSocket.onmessage = function (event) {
     var data = JSON.parse(event.data);
     var tallies = $("div div div.pollStats");
-    $("div div div.pollStats span.votes").map(function(i, v) {
+    $("div div div.pollStats span.tally").map(function(i, v) {
       $(this).html(data[i]);
       return data[i];
     });
   }
 });
 
-var test = $(".votes").map(function(i, e) {$(e).text();});
+function combineData() {
+  var tallies = $(".tally").map(function(i, e) {return $(e).text();});
+  var options = $(".option").map(function(i, e) {return $(e).text();});
+  var data = {};
+  for (i = 0; i < tallies.length; i++) {
+    data[options[i]] = tallies[i];
+  }
+  return data;
+}
 
-console.log(test);
 var cv_w = 300,
 cv_h = 300,
 cv_r = 150
@@ -48,7 +55,11 @@ function cv_arcTween(a) {
 }
 
 function tests (data) {
-  data = data ? data : { "slice1": Math.floor((Math.random()*10)+1), "slice2": Math.floor((Math.random()*10)+1), "slice3": Math.floor((Math.random()*10)+1), "slice4": Math.floor((Math.random()*10)+1) };
+  data = data ? data : {
+    "slice1": Math.floor((Math.random()*10)+1),
+    "slice2": Math.floor((Math.random()*10)+1),
+    "slice3": Math.floor((Math.random()*10)+1),
+    "slice4": Math.floor((Math.random()*10)+1) };
   var dataa = d3.entries(data);
   var cv_path = cv_svg.selectAll("path").data(cv_pie(dataa));
   var cv_text = cv_svg.selectAll("text").data(cv_pie(dataa));
@@ -68,7 +79,7 @@ function tests (data) {
     .attr("text-anchor", "middle")
     .attr("font-weight", "bold")
     .attr("fill", "#FFFFFF")
-    .attr("font-size", "30px")
+    .attr("font-size", "20px")
     .text(function(d) { return d.data.key + "(" + d.data.value + ")"; });
 
   cv_path.transition().duration(750).attrTween("d", cv_arcTween);
@@ -83,4 +94,7 @@ function tests (data) {
 }
 
 
-setInterval(function() { console.log("TEST"); tests(); }, 2000);
+setInterval(function() {
+  var data = combineData();
+  tests(data);
+}, 2000);

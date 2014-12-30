@@ -6,9 +6,9 @@
   <div>
   @for(o <- poll.options.zip(poll.tallies)) {
     <div>
-      <span>@o._1 </span>
+      <span class="option">@o._1 </span>
       <div class="pollStats">
-        <span class="votes">@o._2</span>
+        <span class="tally">@o._2</span>
       </div>
     </div>
   }
