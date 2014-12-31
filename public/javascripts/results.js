@@ -48,7 +48,6 @@ var cv_svg = d3.select("div.mydiv")
 function cv_arcTween(a) {
   var i = d3.interpolate(this._current, a);
   this._current = i(0);
-  //console.log(a);
   return function(t) {
     return cv_arc(i(t));
   };
@@ -80,7 +79,8 @@ function tests (data) {
     .attr("font-weight", "bold")
     .attr("fill", "#FFFFFF")
     .attr("font-size", "20px")
-    .text(function(d) { return d.data.key + "(" + d.data.value + ")"; });
+
+  cv_text.text(function(d) {return d.data.key + "(" + d.data.value + ")";});
 
   cv_path.transition().duration(750).attrTween("d", cv_arcTween);
   cv_text.transition().duration(750).attr("transform", function(d) {
@@ -96,5 +96,6 @@ function tests (data) {
 
 setInterval(function() {
   var data = combineData();
+  console.log("interval");
   tests(data);
 }, 2000);
