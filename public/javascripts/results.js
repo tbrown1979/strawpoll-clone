@@ -36,7 +36,7 @@ cv_r = 150
 cv_color = d3.scale.category10();
 
 var cv_arc = d3.svg.arc().outerRadius(cv_r);
-var cv_pie = d3.layout.pie().value(function (d) { return d.value });
+var cv_pie = d3.layout.pie().sort(null).value(function (d) { return d.value });
 var cv_svg = d3.select("div.mydiv")
   .append("svg")
   .attr("width", cv_w)
@@ -46,9 +46,15 @@ var cv_svg = d3.select("div.mydiv")
   .attr("transform", "translate(" + cv_r + "," + cv_r + ")");
 
 function cv_arcTween(a) {
+  console.log(this._current);
+  console.log(a);
+  console.log("----------------------");
   var i = d3.interpolate(this._current, a);
+  //console.log(i);
   this._current = i(0);
+  //console.log(this._current);
   return function(t) {
+    //console.log(t);
     return cv_arc(i(t));
   };
 }
