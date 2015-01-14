@@ -46,15 +46,9 @@ var cv_svg = d3.select("div.mydiv")
   .attr("transform", "translate(" + cv_r + "," + cv_r + ")");
 
 function cv_arcTween(a) {
-  console.log(this._current);
-  console.log(a);
-  console.log("----------------------");
   var i = d3.interpolate(this._current, a);
-  //console.log(i);
   this._current = i(0);
-  //console.log(this._current);
   return function(t) {
-    //console.log(t);
     return cv_arc(i(t));
   };
 }
@@ -99,9 +93,12 @@ function tests (data) {
   cv_text.exit().remove();
 }
 
-
 setInterval(function() {
   var data = combineData();
-  console.log("interval");
+
+  var tallies = _.values(data);
+  var tallySum = _.reduce(tallies, function(memo, num){ return Number(memo) + Number(num); }, 0);
+
+  if (tallySum < 1) {console.log("failed"); return;}
   tests(data);
 }, 2000);
