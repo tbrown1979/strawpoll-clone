@@ -28,6 +28,12 @@ object RedisPollRepository extends PollRepository with PollFutureProvider {
     createCustomPoll(newPoll)
   }
 
+  def resetPoll(pollId: String): Future[Option[Poll]] = {
+    get(pollId).flatMap((o: Option[Poll]) =>
+      o.fold(Future.successful(Option.empty[Poll]))
+      (p => createCustomPoll(PollCreation(p.title, p.options), Some(pollId)).map(Some(_))))
+  }
+
   def createCustomPoll(newPoll: PollCreation, customId: Option[String] = None): Future[Poll] = {
     val pollId = customId.fold(redis.incr("pollId").map(_.toString))(s => Future.successful(s))
 
