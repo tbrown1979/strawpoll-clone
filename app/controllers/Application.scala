@@ -22,6 +22,7 @@ import util._
 object Application extends Controller {
   val masterSocketActor = Akka.system.actorOf(Props(new MasterSocketActor))
 
+  //move?
   val demoPoll = PollCreation("Demo", Seq("Option1", "Option2", "Option3"))
   RedisPollRepository.createCustomPoll(demoPoll, Some("demo")).onComplete {
     case Success(p) => {
@@ -31,6 +32,8 @@ object Application extends Controller {
       }
       Akka.system.scheduler.schedule(0 milliseconds, 10000 milliseconds) {
         RedisPollRepository.resetPoll("demo")
+        val randInt = scala.util.Random.nextInt(3)
+        votePoll("demo", randInt)
       }
     }
     case Failure(e) => Logger.info("Error encountered with Demo creation: " + e.toString)
