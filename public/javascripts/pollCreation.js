@@ -15,7 +15,6 @@ $(function() {
 
   $("#createPoll").submit(function( event ) {
     var options = getOptions(true);
-    console.log(options);
     event.preventDefault();
   });
 
@@ -30,4 +29,21 @@ $(function() {
 
   $(lastOption()).click(addAnotherTextfield);
 
+  $("#createPoll").submit(function(event) {
+    event.preventDefault();
+    console.log("Handler working!");
+    var title = $(".title").val();
+    var options = _.filter(getOptions(true), function(e) { return e; });
+    var newPoll = {title: title, options: options};
+    console.log(newPoll);
+    $.ajax({
+      type: "POST",
+      url: "/api/poll/new",
+      data: JSON.stringify(newPoll),
+      success: function(data) {
+        console.log(data);
+      },
+      contentType: "application/json"
+    })
+  })
 })
