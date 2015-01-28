@@ -101,4 +101,4 @@ setInterval(function() {
 
   if (tallySum < 1) {console.log("failed"); return;}
   tests(data);
-}, 2000);
+}, 1000);
