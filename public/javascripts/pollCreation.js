@@ -20,14 +20,14 @@ $(function() {
 
   function addAnotherTextfield() {
     var options = getOptions(false);
-    $(lastOption()).unbind("click");
+    $(lastOption()).unbind("keyup");
     $(lastOption()).after(
       "<br><input type='text' name='option" + options.length + "'>"
     );
-    $(lastOption()).click(addAnotherTextfield);
+    $(lastOption()).keyup(addAnotherTextfield);
   }
 
-  $(lastOption()).click(addAnotherTextfield);
+  $(lastOption()).keyup(addAnotherTextfield);
 
   $("#createPoll").submit(function(event) {
     event.preventDefault();

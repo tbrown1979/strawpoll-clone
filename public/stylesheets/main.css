@@ -1,0 +1,29 @@
+header {
+    font-size: 59px;
+    text-align: center;
+}
+
+body {
+    margin: 0;
+    background-color: #323232;
+}
+
+.content {
+    width: 700px;
+    margin: 0 auto;
+}
+
+.titleDiv {
+    position: relative;
+    /* display: inline-block; */
+}
+textarea {
+    margin: 0 auto;
+    background: transparent;
+    display: block;
+    /* border: 0; */
+    /* padding: 0; */
+    /* vertical-align: middle; */
+    width: 600px;
+}
+
