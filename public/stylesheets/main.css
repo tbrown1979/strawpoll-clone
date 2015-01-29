@@ -1,6 +1,8 @@
 header {
     font-size: 59px;
     text-align: center;
+    font-family: 'Sigmar One',sans-serif;
+    color: #c83232;
 }
 
 body {
@@ -11,16 +13,23 @@ body {
 .content {
     width: 700px;
     margin: 0 auto;
+    min-height: 350px;
+}
+
+.createPoll {
+    display: block;
 }
 
 .titleDiv {
     position: relative;
+    min-height: 60px;
     /* display: inline-block; */
 }
 textarea {
     margin: 0 auto;
     background: transparent;
     display: block;
+    font-size: 25px;
     /* border: 0; */
     /* padding: 0; */
     /* vertical-align: middle; */
