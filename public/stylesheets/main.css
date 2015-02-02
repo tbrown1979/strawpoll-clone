@@ -8,12 +8,16 @@ header {
 body {
     margin: 0;
     background-color: #323232;
+    font-family: 'Gloria Hallelujah',arial
 }
 
 .content {
+    background: url(../images/paper-background.png);
     width: 700px;
     margin: 0 auto;
+    margin-top: 10px;
     min-height: 350px;
+    box-shadow: 2px 3px 7px rgba(0,0,0,.7)
 }
 
 .createPoll {
@@ -23,16 +27,73 @@ body {
 .titleDiv {
     position: relative;
     min-height: 60px;
+    padding-top: 5px;
+    margin-left: 60px;
     /* display: inline-block; */
 }
 textarea {
-    margin: 0 auto;
+    /* margin: 0 auto; */
+    font-family: inherit;
     background: transparent;
     display: block;
     font-size: 25px;
+    border: 0;
+    width: 635px;
     /* border: 0; */
     /* padding: 0; */
     /* vertical-align: middle; */
-    width: 600px;
+    /* width: 600px; */
 }
 
+.pollBody {
+    background: url(../images/paper-line.png);
+    line-height: 1.4;
+
+}
+
+.pollOption {
+    /* font-size: 16px; */
+    max-height: 40px;
+}
+
+.optionNumber {
+    vertical-align: top;
+    display: inline-block;
+    color: #c83232;
+    width: 30px;
+    margin-left: 25px;
+    height: 40px;
+    font-size: 29px;
+}
+
+input {
+    font-family: inherit;
+    display: inline-block;
+    height: 40px;
+    padding: 0;
+    border: 0;
+    margin: 0;
+    /* vertical-align: middle; */
+    font-size: inherit;
+    background: transparent;
+    width: 620px;
+}
+
+.pollFooter {
+    background-image: url(../images/paper-line.png);
+    background-repeat: no-repeat;
+    padding-top: 8px;
+    padding-left: 60px;
+}
+
+button {
+    background: #444;
+    font-size: 21px;
+    font-family: 'Sigmar One', sans-serif;
+    color: #fff;
+    height: 40px;
+    border: 0;
+    border-radius: 5px;
+    padding: 0 6px;
+    cursor: pointer;
+}
