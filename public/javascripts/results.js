@@ -8,15 +8,20 @@ $(function() {
     return getId(url);
   }
 
+  var pollStats;
   var id = getIdFromUrl();
   var pollSocket = new WebSocket("ws://localhost:9000/ws/votes/" + id);
   pollSocket.onmessage = function (event) {
     var data = JSON.parse(event.data);
-    var tallies = $("div div div.pollStats");
+    pollStats = data;
+    var tallies = data.tallies;
+    var total = data.total;
+    $("div.pollHeader:last").html(total);
     $("div div div.pollStats span.tally").map(function(i, v) {
-      $(this).html(data[i]);
-      return data[i];
+      $(this).html(tallies[i]);
+      return tallies[i];
     });
+
   }
 });
 

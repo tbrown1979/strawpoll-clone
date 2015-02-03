@@ -17,34 +17,47 @@ object Vote {
 }
 
 //case class VoteCast(pollId: String)
-case class Votes(tallies: Vector[Int])
+case class Votes(tallies: Vector[Int], total: Int)
+object Votes {
+  implicit val votesWrites = new Writes[Votes] {
+    def writes(votes: Votes) = Json.obj(
+      "tallies" -> votes.tallies,
+      "total"   -> votes.total
+    )
+  }
+}
+
 case class Poll(
   title:   String,
   id:      String,
   tallies: Vector[Int],
-  options: Seq[String]
+  options: Seq[String],
+  total:   Int = 0
 )
 
 object Poll {
   def zeroedTallies(options: Seq[String]): Vector[Int] = {
-    println((0 to options.length - 1).toVector.map(_ => 0))
     (0 to options.length - 1).toVector.map(_ => 0)
   }
 
   implicit val pollWrites = new Writes[Poll] {
-    def writes(poll: Poll) = Json.obj(
-      "title"   -> poll.title,
-      "id"      -> poll.id,
-      "tallies" -> poll.tallies,
-      "options"  -> poll.options
-    )
+    def writes(poll: Poll) = {
+      Json.obj(
+        "title"   -> poll.title,
+        "id"      -> poll.id,
+        "tallies" -> poll.tallies,
+        "options" -> poll.options,
+        "total"   -> poll.total
+      )
+    }
   }
 
   implicit val pollReads: Reads[Poll] = (
     (JsPath \ "title").read[String] and
     (JsPath \ "id").read[String] and
     (JsPath \ "tallies").read[Vector[Int]] and
-    (JsPath \ "options").read[Seq[String]]
+    (JsPath \ "options").read[Seq[String]] and
+    (JsPath \ "total").read[Int]
   )(Poll.apply _)
 
   implicit def toPoll(pm: Map[String, Any], pollId: String): Option[Poll] = {
@@ -55,8 +68,10 @@ object Poll {
         .map(o => pm(o)).toSeq.asInstanceOf[Seq[String]]
       val tallies = pm.keys.filter(o => o.forall(_.isDigit)).toVector
         .sorted.map(d => pm(d).toString.toInt).asInstanceOf[Vector[Int]]
+      //this needs to be safer......
+      val total = pm("total").asInstanceOf[String].toInt
 
-      Some(Poll(title, pollId, tallies, options))
+      Some(Poll(title, pollId, tallies, options, total))
     } catch {
       case e: Throwable =>
         Logger.info(e.toString)
@@ -71,6 +86,7 @@ object Poll {
       .map(_.toString).zip(poll.tallies.map(_.toString))
     val optionMap = poll.options.foldLeft(Map[String,String]() -> 0)(
       (b, a) => (b._1.+(s"Option${b._2}" -> a) -> (b._2 + 1)))._1
-    titleMap ++ tallyMap ++ optionMap ++ id
+    val total     = Map("total" -> poll.total.toString)
+    titleMap ++ tallyMap ++ optionMap ++ id ++ total
   }
 }

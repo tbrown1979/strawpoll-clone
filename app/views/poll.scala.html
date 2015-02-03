@@ -1,15 +1,21 @@
 @(poll: Poll)
 
 @main("The Poll"){
-    <form id="castVote" action="">
-      <div class="">
-        @poll.title<br>
-        @for(o <- poll.options.zipWithIndex) {
-          <input type="radio" name="option" value="@o._2">@o._1<br>
-        }
-        <input type="submit" value="Go">
-      </div>
-    </form>
+<div class="pollHeader">
+  @poll.title
+</div>
+<div class="pollBody">
+  @for(o <- poll.options.zipWithIndex) {
+    <div class="voteOption">
+      <span><input type="radio" name="option" value="@o._2"></span>
+      <span class="optionChoice"> @o._1</span>
+    </div>
+  }
+</div>
+<div class="pollFooter">
+  <button class="castVote left">Vote</button>
+  <button class="right">Results</button>
+</div>
 }{
 <script src="@routes.Assets.at("javascripts/hello.js")" type="text/javascript"></script>
 }

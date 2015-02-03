@@ -2,11 +2,14 @@
 
 @main("Results"){
 
-  @poll.title<br>
-  <div>
-  @for(o <- poll.options.zip(poll.tallies)) {
+  <div class="pollHeader">
+    @poll.title
+  </div>
+  <div class="pollBody">
+  @for(o <- poll.options.zip(poll.tallies).zipWithIndex) {
     <div>
-      <span class="option">@o._1 </span>
+      <span class="optionNumber">@(o._2+1).</span>
+      <span class="optionChoice">@(o._1._1)</span>
       <div class="pollStats">
         <span class="tally">@o._2</span>
       </div>

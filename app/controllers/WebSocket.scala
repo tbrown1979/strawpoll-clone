@@ -22,8 +22,8 @@ class PollSocketActor(out: ActorRef, socketManager: ActorRef, pollId: String) ex
 
   def receive = {
     case msg: JsValue => out ! s"I received your message: $msg"
-    case Votes(tallies) => {
-      out ! Json.toJson(tallies)
+    case v@Votes(tallies, total) => {
+      out ! Json.toJson(v)
     }
     case _ => Logger.info("Didn't match anything")
   }

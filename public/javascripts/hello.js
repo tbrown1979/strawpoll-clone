@@ -5,9 +5,9 @@ $(function() {
     return id;
   }
 
-  $("#castVote").submit(function( event ) {
+  $(".castVote").click(function( event ) {
     console.log("Handler called");
-    event.preventDefault();
+    //event.preventDefault();
 
     var index = $("input[name=option]:checked").val()
     var id = getIdFromUrl();
@@ -23,5 +23,9 @@ $(function() {
       contentType: "application/json"
     })
   });
+
+  $("button.right").click(function(event) {
+    window.location.href = window.location.href + "/r";
+  })
 
 });

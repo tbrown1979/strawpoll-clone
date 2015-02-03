@@ -59,7 +59,10 @@ object RedisPollRepository extends PollRepository with PollFutureProvider {
   def incrOption(pollId: String, optionIndex: Int): Future[Option[Long]] = {
     val check = redis.hExists(s"poll:$pollId", s"${optionIndex.toString}")
     check.flatMap(exists => exists match {
-      case true => redis.hIncrBy(s"poll:$pollId", s"${optionIndex.toString}", 1).map(Some(_))
+      case true =>
+        val total = redis.hIncrBy(s"poll:$pollId", "total", 1)
+        val vote  = redis.hIncrBy(s"poll:$pollId", s"${optionIndex.toString}", 1).map(Some(_))
+        vote
       case false => Future.successful(None)
     })
   }

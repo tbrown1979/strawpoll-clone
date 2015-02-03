@@ -41,7 +41,7 @@ class MasterSocketActor extends Actor with PollEventSource {
   def masterReceive: Receive = {
     case SocketVote(pollId) =>
       RedisPollRepository.get(pollId).map(_.foreach(poll =>
-        sendEventTo(pollId, Votes(poll.tallies))))
+        sendEventTo(pollId, Votes(poll.tallies, poll.total))))
   }
 
   def receive = eventSourceReceive orElse masterReceive
