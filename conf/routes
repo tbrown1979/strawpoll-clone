@@ -10,6 +10,7 @@ GET     /:id/r                      controllers.Application.viewResults(id: Stri
 GET     /ws/votes/:id               controllers.Application.apiSocketPoll(id: String)
 POST    /api/poll/new               controllers.Application.newPoll
 POST    /api/poll/vote              controllers.Application.castVote        
+GET     /api/poll/:id               controllers.Application.getPoll(id: String)
 
 
 # Map static resources from the /public folder to the /assets URL path

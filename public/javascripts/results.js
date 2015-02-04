@@ -7,27 +7,41 @@ $(function() {
     }
     return getId(url);
   }
+  var id = getIdFromUrl();
+
+  $.ajax({
+    type: "GET",
+    url: "/api/poll/new",
+    data: JSON.stringify(newPoll),
+    success: function(data) {
+      console.log(data);
+    },
+    contentType: "application/json"
+  })
+
 
   var pollStats;
-  var id = getIdFromUrl();
+
   var pollSocket = new WebSocket("ws://localhost:9000/ws/votes/" + id);
   pollSocket.onmessage = function (event) {
     var data = JSON.parse(event.data);
     pollStats = data;
     var tallies = data.tallies;
     var total = data.total;
-    $("div.pollHeader:last").html(total);
-    $("div div div.pollStats span.tally").map(function(i, v) {
-      $(this).html(tallies[i]);
+    $("div div div.optionCount span.tally").map(function(i, v) {
+      var percentage = Math.round(((tallies[i] / total) || 0) * 100);
+      $(this).html("Votes: " + tallies[i] + " (" + percentage + "%)");
+
+      //$(this).html(tallies[i]);
       return tallies[i];
     });
-
   }
 });
 
 function combineData() {
-  var tallies = $(".tally").map(function(i, e) {return $(e).text();});
-  var options = $(".option").map(function(i, e) {return $(e).text();});
+  //var tallies = $(".tally").map(function(i, e) {return $(e).text();});
+  var tallies = pollStats.tallies;
+  var options = $("pollBody div span.optionResult").map(function(i, e) {return $(e).text();});
   var data = {};
   for (i = 0; i < tallies.length; i++) {
     data[options[i]] = tallies[i];

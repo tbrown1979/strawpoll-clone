@@ -59,6 +59,14 @@ object Application extends Controller {
       _.fold(Ok(views.html.error("Poll not found")))((p: Poll) => Ok(views.html.poll(p)))
     )
   }
+
+  def getPoll(id: String) = Action.async {
+    val errorMsg = Ok(Json.obj("status" -> "KO", "message" -> "Poll not found"))
+    RedisPollRepository.get(id).map(_.fold(errorMsg)
+      (p => Ok(Json.toJson(p)))
+    )
+  }
+
   def viewResults(id: String) = Action.async {
     RedisPollRepository.get(id).map(
       _.fold(Ok(views.html.error("Poll not found")))((p: Poll) => Ok(views.html.results(p)))

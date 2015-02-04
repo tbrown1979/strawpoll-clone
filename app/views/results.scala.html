@@ -5,16 +5,24 @@
   <div class="pollHeader">
     @poll.title
   </div>
-  <div class="pollBody">
+  <div class="pollBody results">
   @for(o <- poll.options.zip(poll.tallies).zipWithIndex) {
     <div>
       <span class="optionNumber">@(o._2+1).</span>
-      <span class="optionChoice">@(o._1._1)</span>
-      <div class="pollStats">
-        <span class="tally">@o._2</span>
+      <span class="optionResult">@(o._1._1)</span>
+      <div class="optionCount">
+        <div class="resultMeter">
+          <div class="meter">
+          </div>
+        </div>
+        <span class="tally">
+          @{if (poll.total > 0) (o._2 / poll.total) else 0}% @o._2
+        </span>
       </div>
     </div>
   }
+  </div>
+  <div class="pollFooter">
   </div>
 
   <div class="mydiv"></div>
