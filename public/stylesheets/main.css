@@ -146,12 +146,13 @@ input[type=radio] {
     height: 18px;
     background: #ddd;
     vertical-align: middle;
+    border-radius: 4px;
+    overflow: hidden;
 }
 
 .meter {
-    width: 100%;
+    width: 0%;
     background-image: url(../images/meter-bar.png);
     height: 100%;
-    border-radius: 4px;
 }
 
