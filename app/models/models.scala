@@ -67,7 +67,8 @@ object Poll {
         .sortWith((s1: String, s2: String) => s1.last.toInt < s2.last.toInt)
         .map(o => pm(o)).toSeq.asInstanceOf[Seq[String]]
       val tallies = pm.keys.filter(o => o.forall(_.isDigit)).toVector
-        .sorted.map(d => pm(d).toString.toInt).asInstanceOf[Vector[Int]]
+        .map(d => d.toString.toInt).sorted
+        .map(d => pm(d.toString).toString.toInt).asInstanceOf[Vector[Int]]
       //this needs to be safer......
       val total = pm("total").asInstanceOf[String].toInt
 
@@ -86,6 +87,7 @@ object Poll {
       .map(_.toString).zip(poll.tallies.map(_.toString))
     val optionMap = poll.options.foldLeft(Map[String,String]() -> 0)(
       (b, a) => (b._1.+(s"Option${b._2}" -> a) -> (b._2 + 1)))._1
+    Logger.info(optionMap.toString)
     val total     = Map("total" -> poll.total.toString)
     titleMap ++ tallyMap ++ optionMap ++ id ++ total
   }

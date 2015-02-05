@@ -18,7 +18,8 @@ $(function() {
       url: "/api/poll/vote",
       data: strData,
       success: function(data) {
-        window.location.href = "/" + id + "/r";
+        console.log(data);
+        //window.location.href = "/" + id + "/r";
       },
       contentType: "application/json"
     })
