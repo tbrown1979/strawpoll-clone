@@ -21,6 +21,19 @@ $(function() {
   })
 
   function watchForUpdates(poll) {
+    function getPercentageTotal(index, total) {
+      var percentage = Math.round(((poll.tallies[index] / total) || 0) * 100);
+      return percentage;
+    }
+
+    function updateMeters() {
+      var meters = $(".meter");
+      meters.map(function(i, v) {
+        var percentage = getPercentageTotal(i, poll.total);
+        $(v).css("width", percentage + "%");
+      })
+    }
+    updateMeters();
 
     var pollSocket = new WebSocket("ws://localhost:9000/ws/votes/" + id);
     pollSocket.onmessage = function (event) {
@@ -32,13 +45,15 @@ $(function() {
       updatePieChart(tallies, poll.options, total);
       var meters = $(".meter");
       $("div div div.optionCount span.tally").map(function(i, v) {
-        var percentage = Math.round(((tallies[i] / total) || 0) * 100);
+        var percentage = getPercentageTotal(i, poll.total);
         $(meters[i]).css("width", percentage + "%");
         $(this).html("Votes: " + tallies[i] + " (" + percentage + "%)");
         return tallies[i];
       });
     }
   }
+
+
 
   function combineData(tallies, options) {
     var data = {};

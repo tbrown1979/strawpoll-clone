@@ -16,7 +16,9 @@
           </div>
         </div>
         <span class="tally">
-          Votes: @o._1._2 (@{if (poll.total > 0) (o._2 / poll.total) else 0}%)
+          Votes: @o._1._2 (@{
+            if (poll.total > 0) ((o._1._2.toFloat / poll.total) * 100).round
+            else 0}%)
         </span>
       </div>
     </div>

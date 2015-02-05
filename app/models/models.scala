@@ -69,7 +69,6 @@ object Poll {
       val tallies = pm.keys.filter(o => o.forall(_.isDigit)).toVector
         .map(d => d.toString.toInt).sorted
         .map(d => pm(d.toString).toString.toInt).asInstanceOf[Vector[Int]]
-      //this needs to be safer......
       val total = pm("total").asInstanceOf[String].toInt
 
       Some(Poll(title, pollId, tallies, options, total))
