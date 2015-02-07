@@ -16,9 +16,7 @@
           </div>
         </div>
         <span class="tally">
-          Votes: @o._1._2 (@{
-            if (poll.total > 0) ((o._1._2.toFloat / poll.total) * 100).round
-            else 0}%)
+
         </span>
       </div>
     </div>
@@ -27,6 +25,17 @@
   <div class="pollFooter">
     Total Votes: 12081238132091328
   </div>
+  <svg style="width: 0px; height: 0px;">
+    <defs>
+      <filter id="textBackground">
+        <feFlood flood-color="#000"></feFlood>
+        <feComponentTransfer>
+          <feFuncA type="linear" slope="0.75"></feFuncA>
+        </feComponentTransfer>
+        <feComposite in="SourceGraphic"></feComposite>
+      </filter>
+    </defs>
+  </svg>
   <div class="mydiv"></div>
 }{
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.2/d3.min.js" type="text/javascript"></script>

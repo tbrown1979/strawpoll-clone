@@ -72,7 +72,7 @@ textarea {
     display: inline-block;
     color: #c83232;
     width: 30px;
-    margin-left: 25px;
+    margin-left: 22px;
     height: 40px;
     font-size: 29px;
 }
@@ -164,8 +164,82 @@ input[type=radio] {
 }
 
 .pie {
-    display: inline-block;
-    /* margin: 0 auto; */
-    margin-left: 20px;
-    vertical-align: top;
+    /* display: inline-block; */
+    /* /\* margin: 0 auto; *\/ */
+    /* margin-left: 20px; */
+    /* vertical-align: top; */
 }
+
+.pieChart {
+  height: 300px;
+  width: 300px;
+  overflow: visible;
+  background-image: url(../images/d3635bde.grid.png);
+  display: inline-block;
+  vertical-align: top;
+}
+
+.pieChart svg {
+  width: 300px;
+  height: 300px;
+  overflow: visible;
+}
+
+.piechart svg>g path {
+  overflow: visible;
+}
+
+.pieChart svg>g path {
+  stroke: #fff;
+  -webkit-transform: scale(1);
+  -moz-transform: scale(1);
+  -o-transform: scale(1);
+  -ms-transform: scale(1);
+  transform: scale(1);
+  -webkit-transition: all 250ms;
+  -moz-transition: all 250ms;
+  -o-transition: all 250ms;
+  -ms-transition: all 250ms;
+  transition: all 250ms;
+}
+
+.pieChart svg>g path:hover {
+  -webkit-transform: scale(1.1);
+  -moz-transform: scale(1.1);
+  -o-transform: scale(1.1);
+  -ms-transform: scale(1.1);
+  transform: scale(1.1);
+}
+
+.pieChart svg>g:hover text:not(.hover) {
+  opacity: .2;
+}
+
+.pieChart svg>g text {
+  font-family: 'Walter Turncoat',sans-serif;
+  pointer-events: none;
+  fill: #000;
+  text-anchor: middle;
+  font-size: .8em;
+  -webkit-transition: all 250ms;
+  -moz-transition: all 250ms;
+  -o-transition: all 250ms;
+  -ms-transition: all 250ms;
+  transition: all 250ms;
+  overflow: visible;
+}
+
+.pieChart svg>g text.hover {
+  font-size: 1.3em;
+  fill: #fff;
+  filter: url(#textBackground);
+  visibility: visible !important;
+}
+
+/* .pieChart svg>g path:hover + text { */
+/*   font-size: 1.3em; */
+/*   fill: #fff; */
+/*   background: #000; */
+/*   filter: url(#textBackground); */
+/*   visibility: visible!important; */
+/* } */

@@ -13,44 +13,54 @@ $(function() {
     type: "GET",
     url: "/api/poll/" + id,
     success: function(data) {
-      console.log(data);
-      updatePieChart(data.tallies, data.options, data.total);
+      //console.log(data);
+      updatePoll(data);
       watchForUpdates(data);
     },
     contentType: "application/json"
   })
 
+  function getPercentageTotal(tally, total) {
+    var percentage = Math.round(((tally / total) || 0) * 100);
+    return percentage;
+  }
+
   function watchForUpdates(poll) {
-    function getPercentageTotal(index, total) {
-      var percentage = Math.round(((poll.tallies[index] / total) || 0) * 100);
-      return percentage;
-    }
-
-    function updateMeters() {
-      var meters = $(".meter");
-      meters.map(function(i, v) {
-        var percentage = getPercentageTotal(i, poll.total);
-        $(v).css("width", percentage + "%");
-      })
-    }
-    updateMeters();
-
     var pollSocket = new WebSocket("ws://localhost:9000/ws/votes/" + id);
     pollSocket.onmessage = function (event) {
       var data    = JSON.parse(event.data);
-      var tallies = data.tallies;
-      var total   = data.total;
-      poll.tallies = tallies;
-      poll.total   = total;
-      updatePieChart(tallies, poll.options, total);
-      var meters = $(".meter");
-      $("div div div.optionCount span.tally").map(function(i, v) {
-        var percentage = getPercentageTotal(i, poll.total);
-        $(meters[i]).css("width", percentage + "%");
-        $(this).html("Votes: " + tallies[i] + " (" + percentage + "%)");
-        return tallies[i];
-      });
+      poll.tallies = data.tallies;
+      poll.total   = data.total;
+      updatePoll(poll)
     }
+  }
+
+  function updatePoll(poll) {
+    updatePieChart(poll.tallies, poll.options, poll.total);
+    var meters = $(".meter");
+    $("div div div.optionCount span.tally").map(function(i, v) {
+      var percentage = getPercentageTotal(poll.tallies[i], poll.total);
+      $(meters[i]).css("width", percentage + "%");
+      $(this).html("Votes: " + poll.tallies[i] + " (" + percentage + "%)");
+      return poll.tallies[i];
+    });
+  }
+
+  function startHighlightTextEvent() {
+    var paths = $(".pie svg>g path");
+    var texts = $(".pie svg>g text");
+    console.log(texts);
+    _.each(paths, function(p, i) {
+      //$(p).attr("hover");
+      $(p).unbind("hover");
+      $(p).hover(function() {
+        console.log("hovering");
+        $(texts[i]).attr("class", "hover");
+      }, function() {
+        $(texts[i]).attr("class", "");
+      });
+    })
+    console.log("did it");
   }
 
   function combineData(tallies, options) {
@@ -67,17 +77,16 @@ $(function() {
     return data;
   }
 
-  $(".content").after("<div class='pie'></div>");
+  $(".content").after("<div class='pie pieChart'></div>");
 
   var sliceFocusOffset = 30,
   cv_w = 300 + (sliceFocusOffset*2) ,
   cv_h = 300 + (sliceFocusOffset*2) ,
   cv_r = 150 ,
-  cv_color = d3.scale.category10();
-
+  cv_color = d3.scale.category20();
 
   var arc = d3.svg.arc().outerRadius(cv_r);
-  var arcOver = d3.svg.arc().outerRadius(cv_r + sliceFocusOffset);
+  var arcOver = d3.svg.arc().outerRadius(cv_r + sliceFocusOffset).innerRadius(0);
   var cv_arc = d3.svg.arc().outerRadius(cv_r);
   var cv_pie = d3.layout.pie().sort(null).value(function (d) { return d.value.tally });
   var cv_svg = d3.select("div.pie")
@@ -98,14 +107,13 @@ $(function() {
   }
 
   function tests (data) {
-    console.log("updating");
     data = data ? data : {
       "slice1": Math.floor((Math.random()*10)+1),
       "slice2": Math.floor((Math.random()*10)+1),
       "slice3": Math.floor((Math.random()*10)+1),
       "slice4": Math.floor((Math.random()*10)+1) };
     var dataa = d3.entries(data);
-    console.log(dataa);
+
     var cv_path = cv_svg.selectAll("path").data(cv_pie(dataa));
     var cv_text = cv_svg.selectAll("text").data(cv_pie(dataa));
 
@@ -113,20 +121,12 @@ $(function() {
       .append("path")
       .attr("fill", function(d, i) { return cv_color(i); } )
       .attr("d", cv_arc)
-      .each(function(d) { console.log(d); this._current = d; })
-      .on("mouseenter", function(d) {
-        d3.select(this)
-          .attr("stroke","white")
-          .transition()
-          .duration(500)
-          .attr("d", arcOver)
-          .attr("stroke-width",0);
+      .each(function(d) {
+        this._current = d;
       })
-      .on("mouseleave", function(d) {
-        d3.select(this).transition()
-          .attr("d", arc)
-          .attr("stroke","none");
-      });
+      .attr("stroke","white")
+      .attr("stroke-width",1);
+
     cv_text.enter()
       .append("text")
       .attr("transform", function(d) {
@@ -134,10 +134,10 @@ $(function() {
         d.outerRadius = cv_r;
         return "translate(" + cv_arc.centroid(d) + ")";
       })
-      .attr("text-anchor", "middle")
-      .attr("font-weight", "bold")
-      .attr("fill", "#FFFFFF")
-      .attr("font-size", "16px")
+      // .attr("text-anchor", "middle")
+      // .attr("font-weight", "bold")
+      // .attr("fill", "#FFFFFF")
+      // .attr("font-size", "12px")
 
     cv_text.text(function(d) {return d.data.value.option + "(" + d.data.value.tally + ")";});
 
@@ -150,21 +150,17 @@ $(function() {
 
     cv_path.exit().remove();
     cv_text.exit().remove();
+    startHighlightTextEvent();
   }
 
   function updatePieChart(tallies, options, total) {
     var data = combineData(tallies, options);
-    console.log(data);
     filteredData = _.filter(data, function(obj) {
-      //if (obj.value <= 0) console.log(obj.value);
       return obj.tally > 0;
     })
 
-    console.log(filteredData);
-
     if (total < 1) {console.log("failed"); return;}
     tests(filteredData);
-    //tests();
   }
 
 });
