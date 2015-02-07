@@ -13,7 +13,6 @@ $(function() {
     type: "GET",
     url: "/api/poll/" + id,
     success: function(data) {
-      //console.log(data);
       updatePoll(data);
       watchForUpdates(data);
     },
@@ -50,6 +49,11 @@ $(function() {
     var paths = $(".pie svg>g path");
     $(paths).prependTo(".pie svg>g");
     var texts = $(".pie svg>g text");
+
+    _.each(texts, function(t, i) {
+
+    })
+
     _.each(paths, function(p, i) {
       $(p).unbind("hover");
       $(p).hover(function() {
@@ -60,14 +64,15 @@ $(function() {
     })
   }
 
-  function combineData(tallies, options) {
+  function combineData(tallies, options, total) {
     var data = [];
     for (i = 0; i < tallies.length; i++) {
       var currentOption = options[i];
       var currentTally = tallies[i];
       dataObj = {
         option: currentOption,
-        tally: currentTally
+        tally: currentTally,
+        total: total
       };
       data.push(dataObj);
     }
@@ -82,16 +87,11 @@ $(function() {
   cv_r = 150 ,
   cv_color = d3.scale.category20();
 
-  d3.selection.prototype.moveToFront = function() {
-    return this.each(function(){
-      this.parentNode.appendChild(this);
-    });
-  };
-
   var arc = d3.svg.arc().outerRadius(cv_r);
   var arcOver = d3.svg.arc().outerRadius(cv_r + sliceFocusOffset).innerRadius(0);
   var cv_arc = d3.svg.arc().outerRadius(cv_r);
-  var cv_pie = d3.layout.pie().sort(null).value(function (d) { return d.value.tally });
+  //.sort(null) ??
+  var cv_pie = d3.layout.pie().value(function (d) { return d.value.tally });
   var cv_svg = d3.select("div.pie")
     .append("svg")
     .attr("width", cv_w)
@@ -129,10 +129,6 @@ $(function() {
       })
       .attr("stroke","white")
       .attr("stroke-width",1)
-      // .on("mouseover", function() {
-      //   var sel = d3.select(this);
-      //   sel.moveToFront();
-      // })
 
     cv_text.enter()
       .append("text")
@@ -141,12 +137,23 @@ $(function() {
         d.outerRadius = cv_r;
         return "translate(" + cv_arc.centroid(d) + ")";
       })
-      // .attr("text-anchor", "middle")
-      // .attr("font-weight", "bold")
-      // .attr("fill", "#FFFFFF")
-      // .attr("font-size", "12px")
 
-    cv_text.text(function(d) {return d.data.value.option + "(" + d.data.value.tally + ")";});
+    cv_text.text(function(d) {
+      var tally = d.data.value.tally;
+      var total = d.data.value.total;
+      return d.data.value.option + "(" + getPercentageTotal(tally, total) + "%)";});
+
+    cv_text.filter(function(d) {
+      var tally = d.data.value.tally;
+      var total = d.data.value.total
+      return getPercentageTotal(tally, total) <= 5;
+    }).attr("visibility", "hidden");
+
+    cv_text.filter(function(d) {
+      var tally = d.data.value.tally;
+      var total = d.data.value.total
+      return getPercentageTotal(tally, total) >= 5;
+    }).attr("visibility", "visible");
 
     cv_path.transition().duration(0).attrTween("d", cv_arcTween);
     cv_text.transition().duration(0).attr("transform", function(d) {
@@ -161,7 +168,8 @@ $(function() {
   }
 
   function updatePieChart(tallies, options, total) {
-    var data = combineData(tallies, options);
+    var data = combineData(tallies, options, total);
+
     filteredData = _.filter(data, function(obj) {
       return obj.tally > 0;
     })
