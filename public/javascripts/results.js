@@ -48,19 +48,16 @@ $(function() {
 
   function startHighlightTextEvent() {
     var paths = $(".pie svg>g path");
+    $(paths).prependTo(".pie svg>g");
     var texts = $(".pie svg>g text");
-    console.log(texts);
     _.each(paths, function(p, i) {
-      //$(p).attr("hover");
       $(p).unbind("hover");
       $(p).hover(function() {
-        console.log("hovering");
         $(texts[i]).attr("class", "hover");
       }, function() {
         $(texts[i]).attr("class", "");
       });
     })
-    console.log("did it");
   }
 
   function combineData(tallies, options) {
@@ -77,13 +74,19 @@ $(function() {
     return data;
   }
 
-  $(".content").after("<div class='pie pieChart'></div>");
+  $(".content").after("<div class='pie'></div>");
 
   var sliceFocusOffset = 30,
   cv_w = 300 + (sliceFocusOffset*2) ,
   cv_h = 300 + (sliceFocusOffset*2) ,
   cv_r = 150 ,
   cv_color = d3.scale.category20();
+
+  d3.selection.prototype.moveToFront = function() {
+    return this.each(function(){
+      this.parentNode.appendChild(this);
+    });
+  };
 
   var arc = d3.svg.arc().outerRadius(cv_r);
   var arcOver = d3.svg.arc().outerRadius(cv_r + sliceFocusOffset).innerRadius(0);
@@ -125,7 +128,11 @@ $(function() {
         this._current = d;
       })
       .attr("stroke","white")
-      .attr("stroke-width",1);
+      .attr("stroke-width",1)
+      // .on("mouseover", function() {
+      //   var sel = d3.select(this);
+      //   sel.moveToFront();
+      // })
 
     cv_text.enter()
       .append("text")

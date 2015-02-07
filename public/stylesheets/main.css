@@ -170,76 +170,60 @@ input[type=radio] {
     /* vertical-align: top; */
 }
 
-.pieChart {
+.pie {
   height: 300px;
   width: 300px;
   overflow: visible;
-  background-image: url(../images/d3635bde.grid.png);
+  background-image: url(/* need image */);
   display: inline-block;
   vertical-align: top;
 }
 
-.pieChart svg {
+.pie svg {
   width: 300px;
   height: 300px;
   overflow: visible;
 }
 
-.piechart svg>g path {
+.pie svg>g path {
   overflow: visible;
 }
 
-.pieChart svg>g path {
-  stroke: #fff;
+.pie svg>g path {
   -webkit-transform: scale(1);
   -moz-transform: scale(1);
-  -o-transform: scale(1);
-  -ms-transform: scale(1);
   transform: scale(1);
   -webkit-transition: all 250ms;
   -moz-transition: all 250ms;
-  -o-transition: all 250ms;
-  -ms-transition: all 250ms;
   transition: all 250ms;
 }
 
-.pieChart svg>g path:hover {
+.pie svg>g path:hover {
   -webkit-transform: scale(1.1);
   -moz-transform: scale(1.1);
-  -o-transform: scale(1.1);
-  -ms-transform: scale(1.1);
   transform: scale(1.1);
 }
 
-.pieChart svg>g:hover text:not(.hover) {
-  opacity: .2;
+.pie svg>g:hover text:not(.hover) {
+  opacity: .25; 
 }
 
-.pieChart svg>g text {
+.pie svg>g text {
   font-family: 'Walter Turncoat',sans-serif;
-  pointer-events: none;
+  pointer-events: none; /*Never knew about this till now*/
   fill: #000;
   text-anchor: middle;
   font-size: .8em;
   -webkit-transition: all 250ms;
   -moz-transition: all 250ms;
-  -o-transition: all 250ms;
-  -ms-transition: all 250ms;
   transition: all 250ms;
   overflow: visible;
+  z-index: 1;
 }
 
-.pieChart svg>g text.hover {
+.pie svg>g text.hover {
   font-size: 1.3em;
   fill: #fff;
-  filter: url(#textBackground);
+  filter: url(#pieTextFilter);
   visibility: visible !important;
 }
-
-/* .pieChart svg>g path:hover + text { */
-/*   font-size: 1.3em; */
-/*   fill: #fff; */
-/*   background: #000; */
-/*   filter: url(#textBackground); */
-/*   visibility: visible!important; */
-/* } */
