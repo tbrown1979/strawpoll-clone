@@ -33,6 +33,10 @@ $(function() {
 
   $(lastOption()).keyup(addAnotherTextfield);
 
+  $(".demoButton").click(function(event) {
+    window.location.href = "/demo/r";
+  })
+
   $(".createPoll").click(function(event) {
     //event.preventDefault();
     console.log("Handler working!");

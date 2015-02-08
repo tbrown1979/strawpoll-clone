@@ -1,20 +1,22 @@
 @(poll: Poll)
 
 @main("The Poll"){
-<div class="pollHeader">
-  @poll.title
-</div>
-<div class="pollBody">
-  @for(o <- poll.options.zipWithIndex) {
-    <div class="voteOption">
-      <span><input type="radio" name="option" value="@o._2"></span>
-      <span class="optionChoice"> @o._1</span>
-    </div>
-  }
-</div>
-<div class="pollFooter">
-  <button class="castVote left">Vote</button>
-  <button class="right">Results</button>
+<div class="content">
+  <div class="pollHeader">
+    @poll.title
+  </div>
+  <div class="pollBody">
+    @for(o <- poll.options.zipWithIndex) {
+              <div class="voteOption">
+                <span><input type="radio" name="option" value="@o._2"></span>
+                <span class="optionChoice"> @o._1</span>
+              </div>
+              }
+  </div>
+  <div class="pollFooter">
+    <button class="castVote left">Vote</button>
+    <button class="right">Results</button>
+  </div>
 </div>
 }{
 <script src="@routes.Assets.at("javascripts/hello.js")" type="text/javascript"></script>

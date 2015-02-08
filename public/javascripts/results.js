@@ -37,13 +37,18 @@ $(function() {
   function updatePoll(poll) {
     updatePieChart(poll.tallies, poll.options, poll.total);
     var meters = $(".meter");
+    var sortedUnzipped = _.zip.apply(_, _.sortBy(_.zip(poll.options, poll.tallies), function(z) {
+      return z[1];
+    }).reverse());
+    var options = sortedUnzipped[0];
+    var tallies = sortedUnzipped[1];
     $("div div div.optionCount span.tally").map(function(i, v) {
       $($(".pollBody span.optionNumber")[i]).html((i+1) + ".");
-      $($(".pollBody span.optionResult")[i]).html(poll.options[i]);
-      var percentage = getPercentageTotal(poll.tallies[i], poll.total);
+      $($(".pollBody span.optionResult")[i]).html(options[i]);
+      var percentage = getPercentageTotal(tallies[i], poll.total);
       $(meters[i]).css("width", percentage + "%");
-      $(this).html("Votes: " + poll.tallies[i] + " (" + percentage + "%)");
-      return poll.tallies[i];
+      $(this).html("Votes: " + tallies[i] + " (" + percentage + "%)");
+      return tallies[i];
     });
   }
 
@@ -141,11 +146,6 @@ $(function() {
       var tally = d.data.value.tally;
       var total = d.data.value.total;
       return d.data.value.option + "(" + getPercentageTotal(tally, total) + "%)";});
-
-    cv_path.filter(function(d) {
-      console.log(d);
-      return true;
-    })
 
     cv_text.filter(function(d) {
       var tally = d.data.value.tally;

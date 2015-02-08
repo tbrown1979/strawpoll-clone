@@ -1,5 +1,5 @@
 @main("Strawpoll Clone"){
-<form id="createPoll">
+<div class="content">
   <div class="pollHeader">
     <textarea class="title" placeholder="Type your question here, options below"></textarea>
   </div>
@@ -22,10 +22,11 @@
     </div>
   </div>
   <div class="pollFooter">
-    <button class="createPoll" type="button">Create Poll</button>
+    <button class="createPoll left" type="button">Create Poll</button>
+    <button type="submit" class="demoButton right">Demo</button>
   </div>
+</div>
 
-</form>
 }{
 <script src="@routes.Assets.at("javascripts/pollCreation.js")" type="text/javascript"></script>
 }

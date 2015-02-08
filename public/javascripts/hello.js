@@ -19,7 +19,7 @@ $(function() {
       data: strData,
       success: function(data) {
         console.log(data);
-        //window.location.href = "/" + id + "/r";
+        window.location.href = "/" + id + "/r";
       },
       contentType: "application/json"
     })
