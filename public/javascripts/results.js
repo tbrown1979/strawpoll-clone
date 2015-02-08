@@ -38,6 +38,8 @@ $(function() {
     updatePieChart(poll.tallies, poll.options, poll.total);
     var meters = $(".meter");
     $("div div div.optionCount span.tally").map(function(i, v) {
+      $($(".pollBody span.optionNumber")[i]).html((i+1) + ".");
+      $($(".pollBody span.optionResult")[i]).html(poll.options[i]);
       var percentage = getPercentageTotal(poll.tallies[i], poll.total);
       $(meters[i]).css("width", percentage + "%");
       $(this).html("Votes: " + poll.tallies[i] + " (" + percentage + "%)");
@@ -49,11 +51,6 @@ $(function() {
     var paths = $(".pie svg>g path");
     $(paths).prependTo(".pie svg>g");
     var texts = $(".pie svg>g text");
-
-    _.each(texts, function(t, i) {
-
-    })
-
     _.each(paths, function(p, i) {
       $(p).unbind("hover");
       $(p).hover(function() {

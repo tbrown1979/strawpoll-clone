@@ -8,8 +8,8 @@
   <div class="pollBody results">
   @for(o <- poll.options.zip(poll.tallies).zipWithIndex) {
     <div>
-      <span class="optionNumber">@(o._2+1).</span>
-      <span class="optionResult">@(o._1._1)</span>
+      <span class="optionNumber"></span>
+      <span class="optionResult"></span>
       <div class="optionCount">
         <div class="resultMeter">
           <div class="meter">
