@@ -198,11 +198,17 @@ input[type=radio] {
   transition: all 250ms;
 }
 
-.pie svg>g path:hover {
+.pie svg>g path.hover {
   -webkit-transform: scale(1.1);
   -moz-transform: scale(1.1);
   transform: scale(1.1);
 }
+
+/* .pie svg>g path:hover { */
+/*   -webkit-transform: scale(1.1); */
+/*   -moz-transform: scale(1.1); */
+/*   transform: scale(1.1); */
+/* } */
 
 .pie svg>g:hover text:not(.hover) {
   opacity: .25; 
@@ -218,7 +224,6 @@ input[type=radio] {
   -moz-transition: all 250ms;
   transition: all 250ms;
   overflow: visible;
-  z-index: 1;
 }
 
 .pie svg>g text.hover {

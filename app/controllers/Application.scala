@@ -30,7 +30,7 @@ object Application extends Controller {
         val randInt = scala.util.Random.nextInt(3)
         votePoll("demo", randInt)
       }
-      Akka.system.scheduler.schedule(0 milliseconds, 10000 milliseconds) {
+      Akka.system.scheduler.schedule(0 milliseconds, 100000 milliseconds) {
         RedisPollRepository.resetPoll("demo")
         val randInt = scala.util.Random.nextInt(3)
         votePoll("demo", randInt)

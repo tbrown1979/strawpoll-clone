@@ -54,8 +54,10 @@ $(function() {
     _.each(paths, function(p, i) {
       $(p).unbind("hover");
       $(p).hover(function() {
+        $(p).attr("class", "hover");
         $(texts[i]).attr("class", "hover");
       }, function() {
+        $(p).attr("class", "");
         $(texts[i]).attr("class", "");
       });
     })
@@ -140,6 +142,11 @@ $(function() {
       var total = d.data.value.total;
       return d.data.value.option + "(" + getPercentageTotal(tally, total) + "%)";});
 
+    cv_path.filter(function(d) {
+      console.log(d);
+      return true;
+    })
+
     cv_text.filter(function(d) {
       var tally = d.data.value.tally;
       var total = d.data.value.total
@@ -151,6 +158,8 @@ $(function() {
       var total = d.data.value.total
       return getPercentageTotal(tally, total) >= 5;
     }).attr("visibility", "visible");
+
+
 
     cv_path.transition().duration(0).attrTween("d", cv_arcTween);
     cv_text.transition().duration(0).attr("transform", function(d) {
