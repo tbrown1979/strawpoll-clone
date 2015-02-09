@@ -34,6 +34,18 @@ $(function() {
     }
   }
 
+  function formatForPlural(word, count) {
+    if (count === 0) return word + "s"
+    if (count > 1) return word + "s"
+    return word
+  }
+
+  function formatTotalCount(total) {
+    if (total === 0) return "0 votes";
+    if (total === 1) return "1 vote";
+    return total + " total votes";
+  }
+
   function updatePoll(poll) {
     updatePieChart(poll.tallies, poll.options, poll.total);
     var meters = $(".meter");
@@ -42,12 +54,13 @@ $(function() {
     }).reverse());
     var options = sortedUnzipped[0];
     var tallies = sortedUnzipped[1];
+    $(".totalVotes").html(formatTotalCount(poll.total));
     $("div div div.optionCount span.tally").map(function(i, v) {
       $($(".pollBody span.optionNumber")[i]).html((i+1) + ".");
       $($(".pollBody span.optionResult")[i]).html(options[i]);
       var percentage = getPercentageTotal(tallies[i], poll.total);
       $(meters[i]).css("width", percentage + "%");
-      $(this).html("Votes: " + tallies[i] + " (" + percentage + "%)");
+      $(this).html(tallies[i] + " " + formatForPlural("vote", tallies[i]) + " (" + percentage + "%)");
       return tallies[i];
     });
   }
@@ -85,14 +98,12 @@ $(function() {
 
   $(".content").after("<div class='pie'></div>");
 
-  var sliceFocusOffset = 30,
-  cv_w = 300 + (sliceFocusOffset*2) ,
-  cv_h = 300 + (sliceFocusOffset*2) ,
+  cv_w = 300,
+  cv_h = 300,
   cv_r = 150 ,
   cv_color = d3.scale.category20();
 
   var arc = d3.svg.arc().outerRadius(cv_r);
-  var arcOver = d3.svg.arc().outerRadius(cv_r + sliceFocusOffset).innerRadius(0);
   var cv_arc = d3.svg.arc().outerRadius(cv_r);
   //.sort(null) ??
   var cv_pie = d3.layout.pie().value(function (d) { return d.value.tally });
@@ -100,10 +111,9 @@ $(function() {
     .append("svg")
     .attr("width", cv_w)
     .attr("height", cv_h)
-    .attr("style", "display:block; margin: 0 auto;")
     .append("g")
     .attr("transform",
-          "translate(" + (cv_r + sliceFocusOffset) + "," + (cv_r + sliceFocusOffset) + ")");
+          "translate(" + cv_r + "," + cv_r + ")");
 
   function cv_arcTween(a) {
     var i = d3.interpolate(this._current, a);

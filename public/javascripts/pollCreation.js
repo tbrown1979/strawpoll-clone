@@ -49,7 +49,12 @@ $(function() {
       url: "/api/poll/new",
       data: JSON.stringify(newPoll),
       success: function(data) {
-        console.log(data);
+        console.log(document.location.host);
+        $(".notification").css("visibility", "visible");
+        var anchor = $(".notification-text>a");
+        var link = "http://" + document.location.host + "/" + data.id;
+        anchor.text(link);
+        anchor.attr("href", link)
       },
       contentType: "application/json"
     })
