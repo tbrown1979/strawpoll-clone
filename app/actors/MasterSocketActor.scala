@@ -37,10 +37,10 @@ trait PollEventSource { this: Actor =>
   }
 }
 
-class MasterSocketActor extends Actor with PollEventSource {
+class MasterSocketActor(pollRepo: PollRepository) extends Actor with PollEventSource {
   def masterReceive: Receive = {
     case SocketVote(pollId) =>
-      RedisPollRepository.get(pollId).map(_.foreach(poll =>
+      pollRepo.get(pollId).map(_.foreach(poll =>
         sendEventTo(pollId, Votes(poll.tallies, poll.total))))
   }
 

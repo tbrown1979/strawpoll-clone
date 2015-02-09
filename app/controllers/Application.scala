@@ -18,20 +18,19 @@ import scala.concurrent.Future
 import scala.util.{Success, Failure}
 import util._
 
-
 object Application extends Controller {
-  val masterSocketActor = Akka.system.actorOf(Props(new MasterSocketActor))
+  val pollRepo: PollRepository = new RedisPollRepository{}
+  val masterSocketActor = Akka.system.actorOf(Props(new MasterSocketActor(pollRepo)))
 
-  //move?
   val demoPoll = PollCreation("Demo", Seq("Option1", "Option2", "Option3"))
-  RedisPollRepository.createCustomPoll(demoPoll, Some("demo")).onComplete {
+  pollRepo.createCustomPoll(demoPoll, Some("demo")).onComplete {
     case Success(p) => {
-      Akka.system.scheduler.schedule(0 milliseconds, 500 milliseconds){
+      Akka.system.scheduler.schedule(0 milliseconds, 200 milliseconds){
         val randInt = scala.util.Random.nextInt(3)
         votePoll("demo", randInt)
       }
-      Akka.system.scheduler.schedule(0 milliseconds, 100000 milliseconds) {
-        RedisPollRepository.resetPoll("demo")
+      Akka.system.scheduler.schedule(0 milliseconds, 120000 milliseconds) {
+        pollRepo.resetPoll("demo")
         val randInt = scala.util.Random.nextInt(3)
         votePoll("demo", randInt)
       }
@@ -55,27 +54,27 @@ object Application extends Controller {
 
   //refactor
   def poll(id: String) = Action.async {
-    RedisPollRepository.get(id).map(
+    pollRepo.get(id).map(
       _.fold(Ok(views.html.error("Poll not found")))((p: Poll) => Ok(views.html.poll(p)))
     )
   }
 
   def getPoll(id: String) = Action.async {
     val errorMsg = Ok(Json.obj("status" -> "KO", "message" -> "Poll not found"))
-    RedisPollRepository.get(id).map(_.fold(errorMsg)
+    pollRepo.get(id).map(_.fold(errorMsg)
       (p => Ok(Json.toJson(p)))
     )
   }
 
   def viewResults(id: String) = Action.async {
-    RedisPollRepository.get(id).map(
+    pollRepo.get(id).map(
       _.fold(Ok(views.html.error("Poll not found")))((p: Poll) => Ok(views.html.results(p)))
     )
   }
   //--
 
   def votePoll(pollId: String, index: Int): Future[Option[Long]] = {
-    val voteCount = RedisPollRepository.incrOption(pollId, index)
+    val voteCount = pollRepo.incrOption(pollId, index)
     voteCount.foreach(_ => masterSocketActor ! SocketVote(pollId))
     voteCount
   }
@@ -112,7 +111,7 @@ object Application extends Controller {
             Json.obj("status" -> "KO", "message" -> JsError.toFlatJson(errors))))
         },
         toCreate => {
-          val poll = RedisPollRepository.create(toCreate)
+          val poll = pollRepo.create(toCreate)
           poll.map(p => Ok(Json.obj("id" -> p.id)))
         }
       )
