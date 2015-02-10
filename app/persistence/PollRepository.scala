@@ -5,6 +5,7 @@ import actors._
 import akka.actor.ActorSystem
 import akka.actor._
 import models._
+import java.net.URI
 import play.api.Play.current
 import play.api._
 import play.api.libs.concurrent.Akka
@@ -24,7 +25,19 @@ trait PollRepository extends FutureProvider {
 }
 
 trait RedisPollRepository extends PollRepository with PollFutureProvider {
-  val redis = Redis()
+  val prod = Option(System.getenv("REDISCLOUD_URL"))
+  Logger.info(prod.toString)
+  val redis =
+    if (!prod.isEmpty) {
+      val redisUri = new URI(System.getenv("REDISCLOUD_URL"))
+      val host = redisUri.getHost
+      val port = redisUri.getPort
+      Redis(host = host, port = port)
+    }
+    else Redis()
+
+  Logger.info(s"Prod -- $prod")
+
   import redis.dispatcher
 
   def create(newPoll: PollCreation): Future[Poll] = {
