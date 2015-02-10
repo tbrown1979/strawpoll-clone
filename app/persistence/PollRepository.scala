@@ -25,21 +25,14 @@ trait PollRepository extends FutureProvider {
 }
 
 trait RedisPollRepository extends PollRepository with PollFutureProvider {
-  val prod = Option(System.getenv("REDISCLOUD_URL"))
-  Logger.info(prod.toString)
-  Logger.info("")
-  Logger.info("")
-  Logger.info("")
-  Logger.info("")
   val redis =
-    if (!prod.isEmpty) {
+    if (play.api.Play.isDev(play.api.Play.current())) Redis()
+    else {
       val redisUri = new URI(System.getenv("REDISCLOUD_URL"))
       val host = redisUri.getHost
       val port = redisUri.getPort
-      Redis(host = host, port = port, password = None)
+      Redis("application.conf", "production.scredis")
     }
-    else Redis()
-
   Logger.info(s"Prod -- $prod")
 
   import redis.dispatcher
