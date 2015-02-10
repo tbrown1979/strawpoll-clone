@@ -33,7 +33,6 @@ trait RedisPollRepository extends PollRepository with PollFutureProvider {
       val port = redisUri.getPort
       Redis("application.conf", "production.scredis")
     }
-  Logger.info(s"Prod -- $prod")
 
   import redis.dispatcher
 
