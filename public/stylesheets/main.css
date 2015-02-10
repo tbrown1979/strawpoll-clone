@@ -287,7 +287,7 @@ input[type=radio] {
     .container {
         max-width: 700px;
     }
-    .content {
+    .container .content {
         margin: 0 !important;
         
     }

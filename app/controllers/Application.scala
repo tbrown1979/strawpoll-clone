@@ -103,18 +103,37 @@ object Application extends Controller {
   }
 
   def newPoll = Action.async(parse.json) {
+    import PollValidation._
     req => {
       val maybePoll = req.body.validate[PollCreation]
       maybePoll.fold(
         errors => {
-          scala.concurrent.Future(BadRequest(
+          Future.successful(BadRequest(
             Json.obj("status" -> "KO", "message" -> JsError.toFlatJson(errors))))
         },
         toCreate => {
-          val poll = pollRepo.create(toCreate)
-          poll.map(p => Ok(Json.obj("id" -> p.id)))
+          val poll: Future[JsValue] =
+            if (!isValid(toCreate)) {
+              Future.successful(pollInvalidJson)
+            } else {
+              pollRepo.create(toCreate).map(p => Json.obj("id" -> p.id))
+            }
+          poll.map(Ok(_))
         }
       )
     }
   }
+}
+
+object PollValidation {
+  def isValid(poll: PollCreation): Boolean = {
+    val vTitle = poll.title.length > 1
+    val vOptions = poll.options.length > 1
+    return vTitle && vOptions
+  }
+
+  val pollInvalidJson: JsValue = {
+    Json.obj("status" -> "error", "message" -> "Must contain title and at least two options")
+  }
+
 }

@@ -49,7 +49,8 @@ $(function() {
       url: "/api/poll/new",
       data: JSON.stringify(newPoll),
       success: function(data) {
-        console.log(document.location.host);
+        console.log(data.status);
+        if (data.status === "error") return;
         $(".notification").css("visibility", "visible");
         var anchor = $(".notification-text>a");
         var link = "http://" + document.location.host + "/" + data.id;
