@@ -36,7 +36,7 @@ trait RedisPollRepository extends PollRepository with PollFutureProvider {
       val redisUri = new URI(System.getenv("REDISCLOUD_URL"))
       val host = redisUri.getHost
       val port = redisUri.getPort
-      Redis(host = host, port = port)
+      Redis(host = host, port = port, password = None)
     }
     else Redis()
 
