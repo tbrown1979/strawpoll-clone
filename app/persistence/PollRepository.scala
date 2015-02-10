@@ -27,6 +27,10 @@ trait PollRepository extends FutureProvider {
 trait RedisPollRepository extends PollRepository with PollFutureProvider {
   val prod = Option(System.getenv("REDISTOGO_URL"))
   Logger.info(prod.toString)
+  Logger.info("")
+  Logger.info("")
+  Logger.info("")
+  Logger.info("")
   val redis =
     if (!prod.isEmpty) {
       val redisUri = new URI(System.getenv("REDISCLOUD_URL"))
