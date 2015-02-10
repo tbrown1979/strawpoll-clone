@@ -28,11 +28,11 @@ trait RedisPollRepository extends PollRepository with PollFutureProvider {
   val redis =
     if (play.api.Play.isDev(play.api.Play.current)) Redis()
     else {
-      val redisUri = new URI(System.getenv("REDISCLOUD_URL"))
-      val host = redisUri.getHost
-      val port = redisUri.getPort
-      Logger.info(s"HOST --- $host")
-      Logger.info(s"PORT --- $port")
+      //val redisUri = new URI(System.getenv("REDISCLOUD_URL"))
+      //val host = redisUri.getHost
+      //val port = redisUri.getPort
+      //Logger.info(s"HOST --- $host")
+      //Logger.info(s"PORT --- $port")
       Redis("application.conf", "production.scredis")
     }
 
