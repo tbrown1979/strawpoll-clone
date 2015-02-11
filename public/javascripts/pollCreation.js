@@ -38,8 +38,6 @@ $(function() {
   })
 
   $(".createPoll").click(function(event) {
-    //event.preventDefault();
-    console.log("Handler working!");
     var title = $(".title").val();
     var options = _.filter(getOptions(true), function(e) { return e; });
     var newPoll = {title: title, options: options};
