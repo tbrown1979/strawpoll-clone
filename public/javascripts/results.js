@@ -25,7 +25,7 @@ $(function() {
   }
 
   function watchForUpdates(poll) {
-    var pollSocket = new WebSocket("ws://" + window.location.href + "/ws/votes/" + id);
+    var pollSocket = new WebSocket("ws://" + window.location.hostname + "/ws/votes/" + id);
     pollSocket.onmessage = function (event) {
       var data    = JSON.parse(event.data);
       poll.tallies = data.tallies;
