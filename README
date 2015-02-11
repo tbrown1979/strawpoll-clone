@@ -1,4 +1,15 @@
-This is your new Play application
-=================================
+Strawpoll Clone
+=======
+This is a polling application. 
 
-This file will be packaged with your application, when using `activator dist`.
+It allows you to make a poll with as many options as you'd like,
+and then have others cast votes for which option they like the best. There is a results page that you can view for each poll and it updates in realtime. You can view a demo [here](http://strawpoll.tbrown.im)
+
+This project is a clone of [strawpoll.me](http://strawpoll.me). 
+
+##Built With
+- Scala 
+- Play
+- Akka
+- Redis(Scredis)
+- Websockets
